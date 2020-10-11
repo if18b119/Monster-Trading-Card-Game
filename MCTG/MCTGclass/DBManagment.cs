@@ -14,6 +14,43 @@ namespace MCTGclass
             return true;
         }
 
+        public static bool AddUser(string name, string pwd,  UserRole role)
+        {
+            if(role == UserRole.admin)
+            {   
+                if(all_user.Find(x=> x.UniqueName == name)==null) //check if name is unique(no one else with the same name)
+                {
+                    User new_admin = new Admin(name, pwd, UserRole.admin);
+                    all_user.Add(new_admin);
+                    return true;
+                }
+                else
+                {
+                    Console.WriteLine("Username existiert bereits!");
+                    return false;
+                }
+                
+            }
+            else if(role ==UserRole.player)
+            {
+                if (all_user.Find(x => x.UniqueName == name) == null)//Check if  name is unique
+                {
+                    User new_player = new Player(name, pwd, UserRole.player);
+                    all_user.Add(new_player);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+                   
+            }
+            else
+            {
+                return false;
+            }
+
+        }
 
 
     }

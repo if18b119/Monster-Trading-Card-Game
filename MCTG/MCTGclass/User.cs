@@ -8,15 +8,16 @@ namespace MCTGclass
 {
     class User
     {
-        protected string Unique_name { get; set; }
-        protected string Pwd { get; set; }
-        protected int Id { get; set; }
-        protected Role role { get; set; }
+        public string UniqueName { get; set; }
+        public string Pwd { get; set; }
+        public UserRole Role { get; set; }
 
         protected User()
         {
-
         }
+        
+            
+        
 
 
     }
