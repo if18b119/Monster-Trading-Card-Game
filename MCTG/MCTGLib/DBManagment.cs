@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace MCTGclass
 {
-    static class DBManagment
+    public static class DBManagment
     {
-        public static List <User> all_user;
+        public static readonly List <User> all_user = new List<User>();
         public static bool CheckLogIn(string name, int pwd)
         {
             return true;
@@ -18,7 +18,7 @@ namespace MCTGclass
         {
             if(role == UserRole.admin)
             {   
-                if(all_user.Find(x=> x.UniqueName == name)==null) //check if name is unique(no one else with the same name)
+                if(!all_user.Any(u => u.UniqueName == name)) //check if name is unique(no one else with the same name)
                 {
                     User new_admin = new Admin(name, pwd, UserRole.admin);
                     all_user.Add(new_admin);

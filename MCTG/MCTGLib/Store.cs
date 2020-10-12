@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MCTGclass
 {
-    static class Store
+    public static class Store
     {
         static public List<Card> AvailableCards { get; set; }
         static public bool AddCard(Card card)

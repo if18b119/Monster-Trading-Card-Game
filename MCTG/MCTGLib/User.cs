@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MCTGclass
 {
-    class User
+    public class User
     {
         public string UniqueName { get; set; }
         public string Pwd { get; set; }

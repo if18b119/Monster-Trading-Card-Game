@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MCTGclass
 {
-    class Player : User
+    public class Player : User
     {
         public List<Card> Stack { get; }
         public List<Card> Deck { get; } = new List<Card>(4);

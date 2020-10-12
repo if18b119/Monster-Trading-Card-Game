@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MCTGclass
 {
-    abstract class Card
+    public abstract class Card
     {
         public int ID { get; set; }
         public int Damage { get; set; }

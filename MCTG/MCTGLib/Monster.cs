@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MCTGclass
 {
-    class Monster : Card
+    public class Monster : Card
     {
        public MonsterType Mtype { get; set; }
         

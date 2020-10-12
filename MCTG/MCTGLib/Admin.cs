@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MCTGclass
 {
-    class Admin : User
+    public class Admin : User
     {   
         
         public Admin(string unique_name, string pwd, UserRole role)
@@ -14,7 +14,6 @@ namespace MCTGclass
             UniqueName = unique_name;
             Pwd = pwd;
             Role = role;
-            DBManagment.AddUser(UniqueName, Pwd, Role);
         }
 
         //noch zu implementieren

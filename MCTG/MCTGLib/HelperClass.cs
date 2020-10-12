@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MCTGclass
 {
-    static class HelperClass
+    public static class HelperClass
     {
         public static int GetTimeStamp(DateTime value)
         {
