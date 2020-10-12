@@ -8,9 +8,9 @@ namespace MCTGclass
 {
     public static class HelperClass
     {
-        public static int GetTimeStamp(DateTime value)
+        public static long GetTimeStamp(DateTime value)
         {
-            return Convert.ToInt32( value.ToString("yyyyMMddHHmmssffff"));
+            return Convert.ToInt64( value.ToString("yyyyMMddHHmmssffff"));
 
         }
     }

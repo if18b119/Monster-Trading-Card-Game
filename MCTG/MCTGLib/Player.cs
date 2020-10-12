@@ -8,7 +8,7 @@ namespace MCTGclass
 {
     public class Player : User
     {
-        public List<Card> Stack { get; }
+        public List<Card> Stack { get; } = new List<Card>();
         public List<Card> Deck { get; } = new List<Card>(4);
 
         public List<Card> Edeck { get; } = new List<Card>(4);
@@ -24,9 +24,10 @@ namespace MCTGclass
             Coins = 20;
             Elo = 100;
 
+            DBManagment.AddUser(this);
         }
 
-        public bool SellCard(Card sell_card)
+        public void SellCard(Card sell_card)
         {
             if (sell_card!=null)
             {
@@ -37,26 +38,25 @@ namespace MCTGclass
                         Stack.Remove(sell_card);
                         Deck.Remove(sell_card);
                         Coins += 1;
-                        return true;
                     }
                     else
                     {
-                        return false;
+                        throw new Exception("Error -> Card is not allowed to be in the Deck!");
                     }
                 }
                 else
                 {
-                    return false;
+                    throw new Exception("Error -> You dont own the Card!");
                 }
             }
             else
             {
-                return false;
+                throw new Exception("Error -> Got a Null Exception!");
             }
         }
 
 
-        public bool AquirePackage()
+        public void AquirePackage()
         {
             List<Card> new_package;
             if (Coins>5)
@@ -67,12 +67,10 @@ namespace MCTGclass
                     Stack.Add(new_package[i]);
 
                 }
-                return true;
             }
             else
             {
-                Console.WriteLine("You dont have enough coins!");
-                return false;
+                throw new Exception("Error -> You Don't own enough Coins!");
             }
             
         }
@@ -85,18 +83,17 @@ namespace MCTGclass
             }
         }
 
-        public bool ChoseDeck(int index)
+        public void ChoseDeck(int index)
         {   
             if(index<0 && index<=Stack.Count())
             {
                 index = index - 1;
                 Deck.Add(Stack[index]);
-                return true;
             }
             else
-            {   
-                
-                return false;
+            {
+
+                throw new Exception("Error -> Out of Deck's Range!");
             }
             
 

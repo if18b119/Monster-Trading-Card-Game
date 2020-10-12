@@ -8,7 +8,7 @@ namespace MCTGclass
 {
     public abstract class Card
     {
-        public int ID { get; set; }
+        public long ID { get; set; }
         public int Damage { get; set; }
         public string Name { get; set; }
         public CardType Type { get; set; }

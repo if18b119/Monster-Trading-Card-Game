@@ -37,8 +37,8 @@ namespace MCTGclass
             {
                 Damage = 50;
             }
-
-            ID = HelperClass.GetTimeStamp(DateTime.Now);
+            Random rnd = new Random();
+            ID = HelperClass.GetTimeStamp(DateTime.Now)+rnd.Next(0,1000);
             Type = type;
             EType = e_type;
         }

@@ -14,42 +14,80 @@ namespace MCTGclass
             return true;
         }
 
-        public static bool AddUser(string name, string pwd,  UserRole role)
+        public static void AddUser(User new_user)
         {
-            if(role == UserRole.admin)
-            {   
-                if(!all_user.Any(u => u.UniqueName == name)) //check if name is unique(no one else with the same name)
-                {
-                    User new_admin = new Admin(name, pwd, UserRole.admin);
-                    all_user.Add(new_admin);
-                    return true;
-                }
-                else
-                {
-                    Console.WriteLine("Username existiert bereits!");
-                    return false;
-                }
-                
-            }
-            else if(role ==UserRole.player)
+            if(new_user!=null)
             {
-                if (all_user.Find(x => x.UniqueName == name) == null)//Check if  name is unique
+                if (new_user.Role == UserRole.admin)
                 {
-                    User new_player = new Player(name, pwd, UserRole.player);
-                    all_user.Add(new_player);
-                    return true;
+                    if (!all_user.Any(u => u.UniqueName == new_user.UniqueName)) //check if name is unique(no one else with the same name)
+                    {
+                        all_user.Add(new_user);
+
+                    }
+                    else
+                    {
+                        new_user = null;  //deleting the user if it already exists
+                        throw new Exception("Error -> Username already in use!");
+
+                    }
+
+                }
+                else if (new_user.Role == UserRole.player)
+                {
+                    if (!all_user.Any(x => x.UniqueName == new_user.UniqueName))//Check if  name is unique
+                    {
+                        all_user.Add(new_user);
+                    }
+                    else
+                    {
+                        new_user=null; //deleting the user if it already exists
+                        throw new Exception("Error -> Username already in use!");
+                    }
+
                 }
                 else
                 {
-                    return false;
+                    throw new Exception("Error -> Unknown Role");
                 }
-                   
+            }
+
+            else
+            {
+                throw new Exception("Error -> Null type!");
+            }
+            
+
+        }
+
+        public static void DeleteUser(User user)
+        {
+            if(user!=null)
+            {
+                if(all_user.Any(u => u.UniqueName == user.UniqueName))
+                {
+
+                    all_user.Remove(user);
+                    user = null;
+
+                }
+                else
+                {
+                    throw new Exception("Error -> User doesn't exist!");
+                }
             }
             else
             {
-                return false;
+                throw new Exception("Error -> Null Type!");
             }
+        }
 
+        public static void PrintAllUser()
+        {
+            for (int i=0;i<all_user.Count(); i++)
+            {
+                Console.WriteLine($"Name: {all_user[i].UniqueName}");
+            }
         }
 
 
