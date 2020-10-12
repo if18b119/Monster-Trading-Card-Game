@@ -8,8 +8,10 @@ namespace MCTGclass
 {
     class Player : User
     {
-        private List<Card> Stack { get; }
-        private List<Card> Deck { get; } = new List<Card>(4);
+        public List<Card> Stack { get; }
+        public List<Card> Deck { get; } = new List<Card>(4);
+
+        public List<Card> Edeck { get; } = new List<Card>(4);
 
         private int Coins { set; get; }
         private int Elo { set; get; }
@@ -69,9 +71,35 @@ namespace MCTGclass
             }
             else
             {
+                Console.WriteLine("You dont have enough coins!");
                 return false;
             }
             
+        }
+
+        public void PrintStack()
+        {
+            for(int i=0; i<Stack.Count(); i++)
+            {
+                Console.WriteLine($"{i}.    ID: {Stack[i].ID}   Name: {Stack[i].Name}    Type: {Stack[i].Type}    Elementartype: {Stack[i].EType}   Damage: {Stack[i].Damage}");
+            }
+        }
+
+        public bool ChoseDeck(int index)
+        {   
+            if(index<0 && index<=Stack.Count())
+            {
+                index = index - 1;
+                Deck.Add(Stack[index]);
+                return true;
+            }
+            else
+            {   
+                
+                return false;
+            }
+            
+
         }
 
 

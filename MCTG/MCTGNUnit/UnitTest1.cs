@@ -1,5 +1,5 @@
 using NUnit.Framework;
-
+using MCTGclass;
 namespace Tests
 {
     public class Tests
@@ -12,7 +12,7 @@ namespace Tests
         [Test]
         public void Test1()
         {
-            Assert.Pass();
+            User new_admin = new Admin('Tarek', '123', admin);
         }
     }
 }

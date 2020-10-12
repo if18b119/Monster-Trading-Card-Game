@@ -14,6 +14,7 @@ namespace MCTGclass
             UniqueName = unique_name;
             Pwd = pwd;
             Role = role;
+            DBManagment.AddUser(UniqueName, Pwd, Role);
         }
 
         //noch zu implementieren
