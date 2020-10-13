@@ -7,49 +7,58 @@ title Monster Card - Class Diagram
 Store -- User
 
  class DBManagment{
-    {static} all_user : list<User> 
-    {static} CheckLogIn(unique_name : string, pwd : string) : bool
-    {static} AddUser(unique_name : string, pwd : string, role : string)
-    {static} DeleteUser(unique_name: string)
+    +{static} all_user : list<User> 
+    +{static} CheckLogIn(unique_name : string, pwd : string) : bool
+    +{static} AddUser(new_user : User) : void
+    +{static} DeleteUser(user : User) : void
+    +{static} PrintAllUser() : void
 }
 
  class  User{
-    #name : string
+    #unique_name : string
     #pwd : string
     #role : Role
 
     +GetName(): string
     +GetPwd(): string
     +GetRole(): Role 
+    +SetName() : void
+    +SetPwd() : void
+    +Set Role() : void
+
     #<<Create>>User()
     
     
 }
-note left of User: role ->admin, player und die funktionen
+
+
 
 class Player extends User  {
   
   -stack : list <Card>
   -deck : list <Card>
-  -money : int
-  -stats : int
+  -Coins: int
+  -elo : int
   
   <<Create>>Player(name : string, pwd: string, role: Role)
-  +GetMoney() : int
-  +AddCardToStack(new_Card : Card): bool
-  +DeleteCard(card_Rm : Card): bool
-  +Trade():void : bool
+  +GetCois() : int
   +GetStack() : list <Card>
-  +PrintUserInformation(): void
+  +GetDeck() : list <Card>
+  +GetElo() : int
+  +SellCard(sell_card : Card) : void
+  +AquirePackage() : void
+  +PrintStack() : void
+  +ChoseDeck(index : int) : void
+  
 }
-note top of Player: trade()=add()+del()
+
 
 class Admin extends User{
     <<Create>>Admin(name : string, pwd: string, role: Role)
     +AddUser(name : string, pwd: string, role: string) 
     +DeleteUser(unique_name: string)
 }
-note left of Admin : 1.Type & Role bestimmt die Art des Objekts die erstellt wird
+
  
 enum Role{
     admin
@@ -58,9 +67,10 @@ enum Role{
 
 class Store{
     -cards_in_store : list <Card>
-    {static} addCard(card : Card) : bool
-    {static} removeCard(card: Card) : bool
-    {static} SellPackage() : bool
+    +{static} AddCard(card : Card) : void
+    +{static} RemoveCard(card: Card) : void
+    +{static} SellPackage() : list<Card>
+    +GetCard() : list<Card>
     
 }
 
@@ -80,12 +90,13 @@ abstract class Card{
 }
 
 class Monster extends Card{
+    -mtype : MonsterType
     <<Create>> Monster(name : string, damage : int, id : int, type : string, elementar_type : string) 
     
     
 }
 
-note left of Monster : IM attack() wird auch der elemt.type überprüft
+
 class Spell extends Card{
     <<Create>> Spell(name : string, damage : int, id : int, type : string, elementar_type : string) 
    - effective : bool
@@ -100,6 +111,8 @@ class Fight {
     -player1 : Player
     -player2 : Player
     +whoStarts(rand : int)
+    +CompareMonsters() : void
+    +AfterComparing : Card
 }
 
 
