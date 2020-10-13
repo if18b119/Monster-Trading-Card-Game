@@ -9,9 +9,24 @@ namespace MCTGclass
     public static class DBManagment
     {
         public static readonly List <User> all_user = new List<User>();
-        public static bool CheckLogIn(string name, int pwd)
+        public static bool CheckLogIn(string name, string pwd)
         {
-            return true;
+            User tmp = all_user.Find(x => x.UniqueName == name);
+            if(tmp!=null)
+            {
+                if(tmp.Pwd==pwd)
+                {
+                    return true;
+                }
+                else
+                {
+                    throw new Exception("Error -> wrong Password!");
+                }
+            }
+            else
+            {
+                throw new Exception("Error -> Username doesn't exist!");
+            }
         }
 
         public static void AddUser(User new_user)

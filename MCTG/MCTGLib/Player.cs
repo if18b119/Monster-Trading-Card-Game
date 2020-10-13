@@ -13,8 +13,8 @@ namespace MCTGclass
 
         public List<Card> Edeck { get; } = new List<Card>(4);
 
-        private int Coins { set; get; }
-        private int Elo { set; get; }
+        public int Coins { set; get; }
+        public int Elo { set; get; }
 
         public Player(string name, string pwd, UserRole role)
         {

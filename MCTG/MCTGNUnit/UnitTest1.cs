@@ -60,6 +60,7 @@ namespace Tests
             Store.AddCard(monster2);
             Assert.AreEqual(2, Store.AvailableCards.Count);
         }
+      
 
         [Test]
         public void UserBuysPackage()
@@ -78,5 +79,57 @@ namespace Tests
             player1.AquirePackage();
             Assert.AreEqual(5, player1.Stack.Count);                 
         }
+
+        [Test]
+        public void UserBuysPackageNotEnoughCoins()
+        {
+            Player player1 = new Player("Tarek", "123", UserRole.player);
+            Card monster1 = new Monster("Elvis", CardType.monster, ElementarType.fire, MonsterType.FireElv);
+            Card monster2 = new Monster("Ginger", CardType.monster, ElementarType.water, MonsterType.Dragon);
+            Card monster3 = new Monster("Magnum", CardType.monster, ElementarType.fire, MonsterType.Goblin);
+            Card monster4 = new Monster("Krampus", CardType.monster, ElementarType.normal, MonsterType.Kraken);
+            Card monster5 = new Monster("Ork", CardType.monster, ElementarType.normal, MonsterType.Ork);
+            Store.AddCard(monster1);
+            Store.AddCard(monster2);
+            Store.AddCard(monster3);
+            Store.AddCard(monster4);
+            Store.AddCard(monster5);
+            player1.Coins = 4;
+            
+            Assert.Catch<Exception>(()=> player1.AquirePackage());
+        }
+        [Test]
+        public void UserBuysCardNotEnoughCards()
+        {
+            Player player1 = new Player("Tarek", "123", UserRole.player);
+            Card monster1 = new Monster("Elvis", CardType.monster, ElementarType.fire, MonsterType.FireElv);
+            Card monster2 = new Monster("Ginger", CardType.monster, ElementarType.water, MonsterType.Dragon);
+            Store.AddCard(monster1);
+            Store.AddCard(monster2);
+            Assert.Catch<Exception>(() => player1.AquirePackage());
+            
+        }
+
+        [Test]
+        public void LogIn()
+        {
+            Player player1 = new Player("Tarek", "123", UserRole.player);
+            Assert.IsTrue(DBManagment.CheckLogIn("Tarek", "123"));
+        }
+
+        [Test]
+        public void LogInWrongUsername()
+        {
+            Player player1 = new Player("Tarek", "123", UserRole.player);
+            Assert.Catch<Exception>(() => DBManagment.CheckLogIn("Marik", "123"));
+        }
+        [Test]
+        public void LogInWrongPwd()
+        {
+            Player player1 = new Player("Tarek", "123", UserRole.player);
+            //Assert.AreEqual(false, DBManagment.CheckLogIn("Tarek", "124"));
+            Assert.Catch<Exception>(() => DBManagment.CheckLogIn("Tarek", "124"));
+        }
+
     }
 }
