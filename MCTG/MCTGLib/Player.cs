@@ -8,10 +8,10 @@ namespace MCTGclass
 {
     public class Player : User
     {
-        public List<Card> Stack { get; } = new List<Card>();
-        public List<Card> Deck { get; } = new List<Card>(4);
+        public List<Card> Stack { get; set; } = new List<Card>();
+        public List<Card> Deck { get; set; } = new List<Card>(4);
 
-        public List<Card> EDeck { get; } = new List<Card>();
+        public List<Card> EDeck { get; set;} = new List<Card>();
         public int Coins { set; get; }
         public int Elo { set; get; }
 

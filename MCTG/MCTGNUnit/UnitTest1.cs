@@ -172,5 +172,48 @@ namespace Tests
             Assert.AreEqual(1, player2.EDeck.Count);
             Assert.AreEqual("Elvis", player2.EDeck[0].Name);
         }
+
+        [Test]
+        public void GamePlayWithNullPlayer() 
+        {
+            Player player1 = new Player("Tarek", "123", UserRole.player);
+            Player player2 = null;
+            var exc = Assert.Catch<Exception>(() => GamePlay.SetFightAttributes(player1, player2));
+            Assert.AreEqual("Error -> Null Type!", exc.Message);
+        }
+
+        [Test]
+        public void GamePlayWithNotEnoughCards() //one of the player doesnt have enough cards in his Deck
+        {
+            Player player1 = new Player("Tarek", "123", UserRole.player);
+            Player player2 = new Player("Marek", "123", UserRole.player);
+            var exc = Assert.Catch<Exception>(() => GamePlay.SetFightAttributes(player1, player2));
+            Assert.AreEqual("Error -> One of the Players doesn't have enough Cards in his Deck!", exc.Message);
+        }
+
+        [Test]
+        public void GamePlayLogic()
+        {
+            Player player1 = new Player("Tarek", "123", UserRole.player);
+            Player player2 = new Player("Marek", "123", UserRole.player);
+            for(int i=0;i<4;i++)
+            {   
+                player1.Deck[i] = new Monster("Dragonite "+ i, CardType.monster, ElementarType.water, MonsterType.Dragon);
+            }
+            
+            for(int j=0;j<4;j++)
+            {
+                player2.Deck[j] = new Monster("Goblin " +j, CardType.monster, ElementarType.fire, MonsterType.Goblin);
+            }
+
+            GamePlay.SetFightAttributes(player1, player2);
+
+            Assert.AreEqual(103, player1.Elo);
+            Assert.AreEqual(95, player2.Elo);
+            Assert.AreEqual(4, player1.Deck.Count);
+            Assert.AreEqual(4, player2.Deck.Count);
+            Assert.AreEqual(0, player1.EDeck.Count);
+            Assert.AreEqual(0, player2.EDeck.Count);
+        }
     }
 }
