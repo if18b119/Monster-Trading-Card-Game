@@ -37,6 +37,7 @@ class Player extends User  {
   
   -stack : list <Card>
   -deck : list <Card>
+  -EDeck : list <Card>
   -Coins: int
   -elo : int
   
@@ -49,6 +50,8 @@ class Player extends User  {
   +AquirePackage() : void
   +PrintStack() : void
   +ChoseDeck(index : int) : void
+  +GiveCard(enemy : Player, card : Card) : void
+  +TakeCard(card : Card) : void
   
 }
 

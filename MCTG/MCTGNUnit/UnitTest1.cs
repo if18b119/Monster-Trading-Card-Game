@@ -31,7 +31,7 @@ namespace Tests
         }
 
         [Test]
-        public void AdminRemovesUser()
+        public void AdminRemovesUser() //Test if Admin can suc. remove User
         {   
 
             Admin admin = new Admin("Admin", "123", UserRole.admin);
@@ -44,7 +44,7 @@ namespace Tests
         }
 
         [Test]
-        public void AlreadyExistsUserOrNull()
+        public void AlreadyExistsUserOrNull() //Check if you can create 2 Users with the same unique name
         {
             Admin admin = new Admin("Tarek", "123", UserRole.admin);
             Assert.Catch<Exception>(()=>admin.AddUser("Tarek","123",UserRole.player));
@@ -52,7 +52,7 @@ namespace Tests
         }
 
         [Test]
-        public void AddingCardsToStore()
+        public void AddingCardsToStore() //Test if new Cards are added to the store
         {
             Card monster1 = new Monster("Elvis", CardType.monster, ElementarType.fire, MonsterType.FireElv);
             Card monster2 = new Monster("Ginger", CardType.monster, ElementarType.water, MonsterType.Dragon);
@@ -63,7 +63,7 @@ namespace Tests
       
 
         [Test]
-        public void UserBuysPackage()
+        public void UserBuysPackage() //Test if the player can buy a package from store, having enough Coins
         {
             Player player1 = new Player("Tarek", "123", UserRole.player);
             Card monster1 = new Monster("Elvis", CardType.monster, ElementarType.fire, MonsterType.FireElv);
@@ -81,7 +81,7 @@ namespace Tests
         }
 
         [Test]
-        public void UserBuysPackageNotEnoughCoins()
+        public void UserBuysPackageNotEnoughCoins()// Test if the player can buy a package from store, not having enough Coins
         {
             Player player1 = new Player("Tarek", "123", UserRole.player);
             Card monster1 = new Monster("Elvis", CardType.monster, ElementarType.fire, MonsterType.FireElv);
@@ -96,22 +96,23 @@ namespace Tests
             Store.AddCard(monster5);
             player1.Coins = 4;
             
-            Assert.Catch<Exception>(()=> player1.AquirePackage());
+            var ex = Assert.Catch<Exception>(()=> player1.AquirePackage());
+            Assert.AreEqual(ex.Message, "Error -> You Don't own enough Coins!");
         }
         [Test]
-        public void UserBuysCardNotEnoughCards()
+        public void UserBuysCardNotEnoughCards()//Test if the player can buy a package from store, not having enough cards in store
         {
             Player player1 = new Player("Tarek", "123", UserRole.player);
             Card monster1 = new Monster("Elvis", CardType.monster, ElementarType.fire, MonsterType.FireElv);
             Card monster2 = new Monster("Ginger", CardType.monster, ElementarType.water, MonsterType.Dragon);
             Store.AddCard(monster1);
             Store.AddCard(monster2);
-            Assert.Catch<Exception>(() => player1.AquirePackage());
-            
+            var ex = Assert.Catch<Exception>(() => player1.AquirePackage());
+            Assert.AreEqual(ex.Message, "Error -> The store doesn't have enough Cards to sell!");
         }
 
         [Test]
-        public void LogIn()
+        public void LogIn()//Check login
         {
             Player player1 = new Player("Tarek", "123", UserRole.player);
             Assert.IsTrue(DBManagment.CheckLogIn("Tarek", "123"));
@@ -121,15 +122,55 @@ namespace Tests
         public void LogInWrongUsername()
         {
             Player player1 = new Player("Tarek", "123", UserRole.player);
-            Assert.Catch<Exception>(() => DBManagment.CheckLogIn("Marik", "123"));
+            var ex = Assert.Catch<Exception>(() => DBManagment.CheckLogIn("Marik", "123"));
+            Assert.AreEqual(ex.Message, "Error -> Username doesn't exist!");
         }
+
         [Test]
         public void LogInWrongPwd()
         {
             Player player1 = new Player("Tarek", "123", UserRole.player);
-            //Assert.AreEqual(false, DBManagment.CheckLogIn("Tarek", "124"));
-            Assert.Catch<Exception>(() => DBManagment.CheckLogIn("Tarek", "124"));
+
+            var ex = Assert.Catch<Exception>(() => DBManagment.CheckLogIn("Tarek", "124"));
+            Assert.AreEqual(ex.Message, "Error -> wrong Password!");
         }
 
+        [Test]
+        public void GiveNullCard() //Try giving a null card
+        {
+            Player player1 = new Player("Tarek", "123", UserRole.player);
+            Player player2 = new Player("Temp", "123", UserRole.player);
+            Card monster1 = null;
+            player1.Deck.Add(monster1);
+
+
+            var ex = Assert.Catch<Exception>(() => player1.GiveCard(player2, player1.Deck[0]));
+            Assert.AreEqual(ex.Message, "Error -> NULL Value!");
+        }
+
+        [Test]
+        public void GiveNotOwnedCard() //Try give a card that not yours
+        {
+            Player player1 = new Player("Tarek", "123", UserRole.player);
+            Player player2 = new Player("Temp", "123", UserRole.player);
+            Card monster1 = new Monster("Elvis", CardType.monster, ElementarType.fire, MonsterType.FireElv);
+
+            var ex = Assert.Catch<Exception>(() => player1.GiveCard(player2, monster1));
+            Assert.AreEqual(ex.Message, "Error -> You don't own the Card!");
+        }
+
+        [Test]
+        public void GiveTakeCard() //User who loses a round, give his card to the enemy
+        {
+            Player player1 = new Player("Tarek", "123", UserRole.player);
+            Player player2 = new Player("Temp", "123", UserRole.player);
+            Card monster1 = new Monster("Elvis", CardType.monster, ElementarType.fire, MonsterType.FireElv);
+            player1.Deck.Add(monster1);
+
+            player1.GiveCard(player2, monster1);
+            Assert.AreEqual(0, player1.Deck.Count);
+            Assert.AreEqual(1, player2.EDeck.Count);
+            Assert.AreEqual("Elvis", player2.EDeck[0].Name);
+        }
     }
 }

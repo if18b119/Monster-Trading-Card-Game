@@ -11,8 +11,7 @@ namespace MCTGclass
         public List<Card> Stack { get; } = new List<Card>();
         public List<Card> Deck { get; } = new List<Card>(4);
 
-        public List<Card> Edeck { get; } = new List<Card>(4);
-
+        public List<Card> EDeck { get; } = new List<Card>();
         public int Coins { set; get; }
         public int Elo { set; get; }
 
@@ -31,9 +30,9 @@ namespace MCTGclass
         {
             if (sell_card!=null)
             {
-                if(Stack.Find(x=> x.ID==sell_card.ID)!=null) //checking if the card exists in users stack
+                if(Stack.Any(x=> x.ID==sell_card.ID)) //checking if the card exists in users stack
                 {
-                    if(Deck.Find(x=> x.ID ==sell_card.ID)==null) //the card can't be in users deck
+                    if(!Deck.Any(x=> x.ID ==sell_card.ID)) //the card can't be in users deck
                     {
                         Stack.Remove(sell_card);
                         Deck.Remove(sell_card);
@@ -99,6 +98,38 @@ namespace MCTGclass
 
         }
 
+        public void TakeCard(Card card)
+        {
+            if(card==null)
+            {
+                throw new Exception("Error ->  NULL Value!");
+            }
+            else
+            {
+                EDeck.Add(card);
+            }
+        }
+
+        public void GiveCard(Player enemy, Card card)
+        {
+            if (card == null || enemy == null)
+            {
+                throw new Exception("Error -> NULL Value!");
+            }
+            else
+            {
+                if(Deck.Any(x=> x.ID==card.ID))
+                {
+                    Deck.Remove(card);
+                    enemy.TakeCard(card);
+                }
+                else
+                {
+                    throw new Exception("Error -> You don't own the Card!");
+                }
+            }
+            
+        }
 
 
 
