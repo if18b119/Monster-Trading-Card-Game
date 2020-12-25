@@ -112,6 +112,32 @@ namespace Tests
         }
 
         [Test]
+        public void ChoosingCardIntoDeckNotInStack()//Giving INdex of a Card thats not in Stack
+        {
+            Player player1 = new Player("Tarek", "123", UserRole.player);
+            Card monster1 = new Monster("Elvis", CardType.monster, ElementarType.fire, MonsterType.FireElv);
+            Card monster2 = new Monster("Ginger", CardType.monster, ElementarType.water, MonsterType.Dragon);
+            player1.Stack.Add(monster1);
+            player1.Stack.Add(monster2);
+
+            var exc = Assert.Catch<Exception>(() => player1.ChoseDeck(3));
+            Assert.AreEqual(exc.Message, "Error -> Out of Deck's Range!");
+        }
+
+        [Test]
+        public void ChoosingCardIntoDeck()
+        {
+            Player player1 = new Player("Tarek", "123", UserRole.player);
+            Card monster1 = new Monster("Elvis", CardType.monster, ElementarType.fire, MonsterType.FireElv);
+            Card monster2 = new Monster("Ginger", CardType.monster, ElementarType.water, MonsterType.Dragon);
+            player1.Stack.Add(monster1);
+            player1.Stack.Add(monster2);
+
+            player1.ChoseDeck(1);
+            Assert.AreEqual(player1.Deck[0].Name, "Elvis");
+        }
+
+        [Test]
         public void LogIn()//Check login
         {
             Player player1 = new Player("Tarek", "123", UserRole.player);

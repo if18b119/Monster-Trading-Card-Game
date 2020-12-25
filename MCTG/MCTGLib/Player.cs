@@ -84,7 +84,7 @@ namespace MCTGclass
 
         public void ChoseDeck(int index)
         {   
-            if(index<0 && index<=Stack.Count())
+            if(index>0 && index<=Stack.Count())
             {
                 index = index - 1;
                 Deck.Add(Stack[index]);

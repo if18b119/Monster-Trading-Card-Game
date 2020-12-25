@@ -1,0 +1,9 @@
+CREATE TABLE public.all_user_cards
+(
+    id integer NOT NULL,
+    name character varying COLLATE pg_catalog."default" NOT NULL,
+    card_type card_type DEFAULT 'monster'::card_type,
+    elementar_type elementar_type DEFAULT 'normal'::elementar_type,
+    damage integer DEFAULT 30,
+    CONSTRAINT all_user_cards_pkey PRIMARY KEY (id)
+)
