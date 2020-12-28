@@ -8,17 +8,11 @@ namespace MCTGclass
 {
     public class User
     {
-        public string UniqueName { get; set; }
-        public string Pwd { get; set; }
-        public UserRole Role { get; set; }
-
-        protected User()
-        {
-        }
-        
-            
-        
-
+        public string Username { get; set; }
+        public string Password { get; set; }
+        public role Role { get; set; } = role.player;
+        public string Name { get; set; } = "";
+        public string Email { get; set; } = "";
 
     }
 }
