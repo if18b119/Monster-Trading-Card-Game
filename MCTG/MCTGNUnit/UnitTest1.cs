@@ -126,15 +126,18 @@ namespace Tests
 
         [Test]
         public void ChoosingCardIntoDeck()
+
         {
             Player player1 = new Player("Tarek", "123", UserRole.player);
             Card monster1 = new Monster("Elvis", CardType.monster, ElementarType.fire, MonsterType.FireElv);
             Card monster2 = new Monster("Ginger", CardType.monster, ElementarType.water, MonsterType.Dragon);
+
             player1.Stack.Add(monster1);
             player1.Stack.Add(monster2);
 
             player1.ChoseDeck(1);
             Assert.AreEqual(player1.Deck[0].Name, "Elvis");
+
         }
 
         [Test]
@@ -197,6 +200,7 @@ namespace Tests
             Assert.AreEqual(0, player1.Deck.Count);
             Assert.AreEqual(1, player2.EDeck.Count);
             Assert.AreEqual("Elvis", player2.EDeck[0].Name);
+
         }
 
         [Test]
@@ -240,6 +244,7 @@ namespace Tests
             Assert.AreEqual(4, player2.Deck.Count);
             Assert.AreEqual(0, player1.EDeck.Count);
             Assert.AreEqual(0, player2.EDeck.Count);
+
         }
     }
 }

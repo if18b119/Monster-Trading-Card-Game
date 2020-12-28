@@ -13,5 +13,6 @@ namespace MCTGclass
         public role Role { get; set; } = role.player;
         public string Name { get; set; } = "";
         public string Email { get; set; } = "";
+
     }
 }

@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\MCTGLib\MCTGLib.csproj" />
     <ProjectReference Include="..\RestAPIServerLib\RestAPIServerLib.csproj" />
+
   </ItemGroup>
 
 </Project>

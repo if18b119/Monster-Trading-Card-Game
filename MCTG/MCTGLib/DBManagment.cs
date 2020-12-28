@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 using Npgsql;
+
 
 
 namespace MCTGclass
 {
     public static class DBManagment
     {
+
         public static string cs = "Host=localhost;Port=5433;Username=tarek;Password=123456;Database=MCTG";
         public struct Card_Type_Elemnt // mapper for extracting the type and element type out of a cards name
         {
@@ -604,5 +607,6 @@ namespace MCTGclass
                 Console.WriteLine("{0} Exception caught.", e);
             }
         }
+
     }
 }
