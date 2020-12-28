@@ -41,15 +41,14 @@ namespace RestAPIServerLib
             }
 
             //Header Informationen vom  client werden ausgegeben
-           /* Console.WriteLine($"Type: {req.Type}");
+             Console.WriteLine($"Type: {req.Type}");
             Console.WriteLine($"Request: {req.Options}");
             Console.WriteLine($"Protocoll: {req.Protocol}");
-
-            foreach (HeaderInfo tmp in RequestKontext.HeaderInformation)
+            /*
+           foreach (HeaderInfo tmp in RequestKontext.HeaderInformation)
             {
                 Console.WriteLine($"{tmp.key}:{tmp.value}");
             }*/
-            ///
             if (req.Type == "GET")
             {
                 return GET(req);
@@ -81,31 +80,27 @@ namespace RestAPIServerLib
                 return new ServerReply(req.Protocol, "404 Not Found", "", "text");
             }
             string[] frag = req.Options.Split('/'); //---/messages
-            if (frag[1] == "messages" && frag.Length == 2)
-            {
-                string name;
-                string[] messages = Directory.GetFiles(pfad); //geting all messages (with full path)
-                //Converting String array into String
-                StringBuilder tmp = new StringBuilder();
-                foreach (string value in messages)
-                {
-                   
-                    name = value.Replace(pfad,"");
-                    tmp.Append("Name: ");
-                    tmp.Append(name);
-                    tmp.Append("\n");
-                    tmp.Append("Nachricht:\n");
-                    //getting the message out of the txt file
-                    using (var streamReader = new StreamReader(value, Encoding.UTF8))
-                    {
-                        tmp.Append(streamReader.ReadToEnd());
-                    }
-                    tmp.Append("\n\n");
 
+
+            if (frag[1] == "cards" && frag.Length == 2)
+            {
+                string username = req.Authorization;
+                string result = DBManagment.Show_acquired_cards(username);
+                if (result == "Error: User is not logged in / Invalid Token!")
+                {
+                    return new ServerReply(req.Protocol, "401 Unauthorized", "Error: Not logged in or invalid token", "text");
                 }
-                string _return = tmp.ToString();
-                return new ServerReply(req.Protocol, "200 OK", _return, "text");
+                else if (result.Contains("Exception caught: "))
+                {
+                    return BadRequest(req);
+                }
+                else
+                {
+                    return new ServerReply(req.Protocol, "200 OK", result, "text");
+                }
             }
+
+
             else if (frag[1] == "messages" && frag.Length == 3 && frag[2]!="") // frag[0]="", frag[1]="messages", frag[3]=integer
             {
                 if (Convert.ToInt32(frag[2]) <= Directory.GetFiles(pfad).Length && frag[2] != "" && Convert.ToInt32(frag[2]) > 0)//if the index doesn't pass the number of messages
@@ -163,7 +158,6 @@ namespace RestAPIServerLib
                     }
                     else if (response == 1)
                     {
-
                         return new ServerReply(req.Protocol, "406 Not Acceptable", "Error: Username already in use!", "text");
                     }
                     else if (response == 2)
@@ -177,6 +171,8 @@ namespace RestAPIServerLib
 
                 }
             }
+
+
             else if (frag[1] == "sessions" && frag.Length == 2)
             {
                 if (req.Body == "")
@@ -208,10 +204,83 @@ namespace RestAPIServerLib
                     {
                         return BadRequest(req);
                     }
-
-
                 }
 
+            }
+
+            else if (frag[1] == "packages" && frag.Length == 2)
+            {
+                if (req.Body == "")
+                {
+                    return new ServerReply(req.Protocol, "204 No Content", "Error: No Content", "text");
+                }
+                else
+                {
+                    string username = req.Authorization; //username from the req object (req got it from the header information)
+                    Stack<int> response = new Stack<int>(4); 
+                    List<Card> new_cards = JsonConvert.DeserializeObject<List<Card>>(req.Body); //getting the cards from the req body
+                    foreach (Card card in new_cards)
+                    {
+                         response.Push(DBManagment.Add_cards_to_shop(username, card.ID, card.Name,Convert.ToDouble(card.Damage)));
+                    }
+                    if(!response.Contains(1) && !response.Contains(2) && !response.Contains(3) && !response.Contains(4))
+                    {
+                        return new ServerReply(req.Protocol, "201 Created", "Created", "text");
+                    }
+                    if(response.Contains(1))
+                    {
+                        return new ServerReply(req.Protocol, "409 Conflict", "Error: User already logged IN / has a Session!", "text");
+                    }
+                    else if(response.Contains(2))
+                    {
+                        return new ServerReply(req.Protocol, "401 Unauthorized", "Error: You are not authorized!", "text");
+                    }
+                    else if (response.Contains(3))
+                    {
+                        return new ServerReply(req.Protocol, "409 Conflict", "Error: One of the cards already exists!", "text");
+                    }
+                    else
+                    {
+                        return BadRequest(req);
+                    }
+                    
+                }
+            }
+
+            
+            else if (frag[1] == "transactions" && frag.Length == 3 && frag[2] == "packages")
+            {
+                
+                
+                    string username = req.Authorization;
+                    int result = DBManagment.Acquire_Card(username);
+                    if (result == 0)
+                    {
+                        return new ServerReply(req.Protocol, "200 OK", "Cards Acquired", "text");
+                    }
+                   
+                    else if (result == 1)
+                    {
+                        return new ServerReply(req.Protocol, "401 Unauthorized", "Error: Not logged in or invalid token", "text");
+                    }
+
+                    else if (result == 2)
+                    {
+                        return new ServerReply(req.Protocol, "409 Conflict", "Error: Not enough cards in Store!", "text");
+                    }
+
+                    else if (result == 4)
+                    {
+                        return new ServerReply(req.Protocol, "409 Conflict", "Error: User doesnt have enough money!", "text");
+
+                    }
+                    else
+                    {
+                        return BadRequest(req);
+                    }
+                    
+                    
+                
             }
             else
             {
@@ -291,7 +360,7 @@ namespace RestAPIServerLib
                 throw new Exception("Error: NULL!");
             }
 
-            return new ServerReply(req.Protocol, "400 Bad Request", "", "text");            
+            return new ServerReply(req.Protocol, "400 Bad Request", "Bad Request", "text");            
         }
 
         public static ServerReply OuttaRange(RequestKontext req)

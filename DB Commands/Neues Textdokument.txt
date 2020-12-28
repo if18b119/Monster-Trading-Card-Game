@@ -1,0 +1,4 @@
+delete from session where session_id is not null;
+delete from game_user where username is not null;
+delete from store where card_id is not null;
+delete from all_user_cards where card_id is not null;

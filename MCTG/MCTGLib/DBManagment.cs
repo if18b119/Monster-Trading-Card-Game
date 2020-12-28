@@ -278,17 +278,19 @@ namespace MCTGclass
         }
 
 
-        public static bool Add_cards_to_shop(string i_username, string card_id, string card_name, int damage)
+        public static int Add_cards_to_shop(string i_username, string card_id, string card_name, double damage)
         {
             try
             {
                 if (has_session(i_username) == false) //check if token is valid / has session
                 {
-                    throw new Exception("Not logged in / Invalid token");
+                    //throw new Exception("Not logged in / Invalid token");
+                    return 1;
                 }
                 if (Check_admin(i_username) == false) // check if has permission (admin)
                 {
-                    throw new Exception("Not authorized, please contact an Admin!");
+                    //throw new Exception("Not authorized, please contact an Admin!");
+                    return 2;
                 }
                 int count_cards = 0;
                   var con = new NpgsqlConnection(cs);
@@ -325,11 +327,12 @@ namespace MCTGclass
                     cmd2.Prepare();
                     //
                     cmd2.ExecuteNonQuery();
-                    return true;
+                    return 0;
                 }
                 else
                 {
-                    throw new Exception("Error: Card already exists!");
+                    //throw new Exception("Error: Card already exists!");
+                    return 3;
 
                 }
 
@@ -338,7 +341,7 @@ namespace MCTGclass
             catch (Exception e)
             {
                 Console.WriteLine("{0} Exception caught.", e);
-                return false;
+                return 4;
             }
 
         }
@@ -412,27 +415,28 @@ namespace MCTGclass
                 return false;
             }
         }
-        public static bool Requiere_Card(string i_username)
+        public static int Acquire_Card(string i_username)
         {
             try
             {
                 if (has_session(i_username) == false) //check if token is valid / has session
                 {
-                    throw new Exception("Not logged in / Invalid token");
+                    //throw new Exception("Not logged in / Invalid token");
+                    return 1;
                 }
 
-                  var con = new NpgsqlConnection(cs);
+                var con = new NpgsqlConnection(cs);
                 string sql = "Select coins from game_user where username = @username";
-                  var cmd = new NpgsqlCommand(sql, con);
+                var cmd = new NpgsqlCommand(sql, con);
                 con.Open();
                 cmd.Parameters.AddWithValue("username", i_username);
                 cmd.Prepare();
 
-                  NpgsqlDataReader rdr = cmd.ExecuteReader();
+                NpgsqlDataReader rdr = cmd.ExecuteReader();
                 rdr.Read();
                 int player_coins = rdr.GetInt32(0);
                 rdr.Close();
-                if (player_coins > 5)
+                if (player_coins >= 5)
                 {
                     if (Check_enough_cards_store() == true)
                     {
@@ -441,7 +445,7 @@ namespace MCTGclass
                         Random rnd = new Random();
 
                         int rnum = 0;
-                        for (int i = 0; i < 4; i++) //5 random numbers are generated and the card with the same rownumer is added to the stack of the player (5 as a package)
+                        for (int i = 0; i < 5; i++) //5 random numbers are generated and the card with the same rownumer is added to the stack of the player (5 as a package)
                         {
                             number_of_available_cards = Get_number_of_card_store(); //getting the number of avalable cards each time after deleting one
                             rnum = rnd.Next(number_of_available_cards);
@@ -458,7 +462,7 @@ namespace MCTGclass
                             string name = rdr2.GetString(1);
                             string card_type = rdr2.GetString(5);
                             ElementarType elementar_type = (ElementarType)Enum.Parse(typeof(ElementarType), Convert.ToString(rdr2.GetValue(2)));
-                            int damage = rdr2.GetInt32(3);
+                            double damage = rdr2.GetDouble(3);
                             rdr2.Close();
 
                             //add card to users stack
@@ -484,66 +488,106 @@ namespace MCTGclass
 
                             cmd4.ExecuteNonQuery();
                         }
-
+                        if (Decreasing_coins_from_user(i_username) == true)
+                        {
+                            return 0;
+                        }
+                        else
+                        {
+                            //throw new Exception("Error: can't decrease users coins");
+                            return 3;
+                        }
 
                     }
                     else
                     {
-                        throw new Exception("Error: not enough Cards in Store!");
+                        //throw new Exception("Error: not enough Cards in Store!");
+                        return 2;
                     }
-                    if (Decreasing_coins_from_user(i_username) == true)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        throw new Exception("Error: can't decrease users coins");
-                    }
+                   
                 }
                 else
                 {
-                    throw new Exception("Error: Not enough Coins!");
+                    //throw new Exception("Error: Not enough Coins!");
+                    return 4;
                 }
 
             }
             catch (Exception e)
             {
                 Console.WriteLine("{0} Exception caught.", e);
+                return 5;
+            }
+        }
+
+        public static bool Has_Cards(string i_username)
+        {
+            int i = 0;
+            var cs = "Host=localhost;Port=5433;Username=tarek;Password=123456;Database=MCTG";
+            using var con = new NpgsqlConnection(cs);
+            string sql = "Select count (*) from all_user_cards where username = @username";
+            using var cmd = new NpgsqlCommand(sql, con);
+            con.Open();
+            cmd.Parameters.AddWithValue("username", i_username);
+            cmd.Prepare();
+
+            using NpgsqlDataReader rdr = cmd.ExecuteReader();
+            rdr.Read();
+            i = rdr.GetInt32(0);
+            if (i > 0)
+            {
+                return true;
+            }
+            else
+            {
                 return false;
             }
         }
 
-
-
-        public static void Show_acquired_cards(string i_username)
+        public static string Show_acquired_cards(string i_username)
         {
             try
             {
                 if (has_session(i_username) == true)
                 {
-                    var cs = "Host=localhost;Port=5433;Username=tarek;Password=123456;Database=MCTG";
-                      var con = new NpgsqlConnection(cs);
-                    string sql = "Select * from all_user_cards where username = @username";
-                      var cmd = new NpgsqlCommand(sql, con);
-                    con.Open();
-                    cmd.Parameters.AddWithValue("username", i_username);
-                    cmd.Prepare();
-
-                      NpgsqlDataReader rdr = cmd.ExecuteReader();
-                    while (rdr.Read())
+                    if (Has_Cards(i_username))
                     {
-                        Console.WriteLine("Username: {0}    CardID: {1}   Name: {2}   Type: {3}   Element: {4}   Damage: {5}",
-                            rdr.GetString(0), rdr.GetString(4), rdr.GetString(1), rdr.GetString(5), rdr.GetValue(2), rdr.GetInt32(3));
+                        string result = "";
+                        int i = 0;
+                        var cs = "Host=localhost;Port=5433;Username=tarek;Password=123456;Database=MCTG";
+                        using var con = new NpgsqlConnection(cs);
+                        string sql = "Select * from all_user_cards where username = @username";
+                        using var cmd = new NpgsqlCommand(sql, con);
+                        con.Open();
+                        cmd.Parameters.AddWithValue("username", i_username);
+                        cmd.Prepare();
+
+                        using NpgsqlDataReader rdr = cmd.ExecuteReader();
+                        while (rdr.Read())
+                        {
+                            result += i + ") CardID: " + rdr.GetString(4) + " Name: " + rdr.GetString(1) + "Type: " +
+                               rdr.GetString(5) + " Element: " + rdr.GetValue(2) + " Damage: " + rdr.GetDouble(3) + "\n";
+                            i++;
+                        }
+                        return result;
                     }
+                    else
+                    {
+                        return "User doesn't have any Cards!";
+                    }
+
                 }
+
                 else
                 {
-                    throw new Exception("Error: User is not logged in / Invalid Token!");
+                    return "Error: User is not logged in / Invalid Token!";
+
                 }
+
             }
             catch (Exception e)
             {
-                Console.WriteLine("{0} Exception caught.", e);
+                return "Exception caught: " + e;
             }
         }
 

@@ -14,14 +14,15 @@ namespace RestAPIServerLib
         public String Options { get; set; } = "";
         public String Protocol { get; set; } = "";
         public String Body { get; set; } = "";
-
-        public static List<HeaderInfo> HeaderInformation = new List<HeaderInfo>();
-        public RequestKontext(string type, string options, string protocol, string body)
+        public String Authorization { get; set; } = "";
+        public static List<HeaderInfo> HeaderInformation { get; set; } = new List<HeaderInfo>();
+        public  RequestKontext(string type, string options, string protocol, string body, string autho)
         {
             Type = type;
             Options = options;
             Protocol = protocol;
             Body = body;
+            Authorization = autho;
         }
         //static Konstruktor, es wird automatisch aufgerufen um die Klasse zu definieren bevor ein Objekt erstellt wird
         public static RequestKontext GetRequest(String request)
@@ -30,6 +31,7 @@ namespace RestAPIServerLib
             String options = "";
             String protocol = "";
             String body = "";
+            String autho = "";
 
             //Sicherzustellen ob der Request nicht null oder leer ist
             try
@@ -61,18 +63,26 @@ namespace RestAPIServerLib
             Accept - Language: de - DE,de; q = 0.9,en - US; q = 0.8,en; q = 0.7
             */
 
-
-            String[] tokens = request.Split("\r\n");
-
+            //Console.WriteLine(request);
+            String[] tokens = { };
+            tokens = request.Split("\r\n");
+            
             int index = 0;
             foreach (string line in tokens)
             {
+                //Console.WriteLine(line);
                 if (line.Contains(":"))
                 {
                     string[] tmp1 = line.Split(':');
                     HeaderInformation.Add(new HeaderInfo(tmp1[0], tmp1[1]));
+                    if (line.Contains("Authorization"))
+                    {
+                        autho=tmp1[1].Replace("Basic", "");
+                        autho = autho.Replace("-mtcgToken", "");
+                        autho = autho.Trim();
+                    }
                 }
-
+              
                 else if (line == "")
                 {
                     index = Array.FindIndex(tokens, row => row == line);
@@ -80,6 +90,7 @@ namespace RestAPIServerLib
                     {
                         body += tokens[i];
                         body += "\n";
+                        //Console.WriteLine(body);
                     }
                     break;
                 }
@@ -89,9 +100,9 @@ namespace RestAPIServerLib
             //Die erste Zeile ist in der header ist bei jedem client gleich Type /option /Protocol
             type = tokens[0].Split(' ')[0];
             options = tokens[0].Split(' ')[1];
-            protocol = tokens[0].Split(' ')[2].Trim('\r');
+            protocol = tokens[0].Split(' ')[2];
 
-            return new RequestKontext(type, options, protocol, body);
+            return new RequestKontext(type, options, protocol, body, autho);
 
 
             //Die Informationen des Sockets/Client 

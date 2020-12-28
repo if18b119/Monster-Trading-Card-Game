@@ -35,8 +35,9 @@ namespace RestAPIServerLib
                     Console.Write("Waiting for a connection... ");
                     TcpClient client = listener.AcceptTcpClient(); // Server akzeptiert einen Request/Client und blockt
                     Console.WriteLine("Connected successfully!");
-                    Thread thread1 = new Thread(() => ClientHandler(client));
-                    thread1.Start();
+                    ClientHandler(client);
+                    //Thread thread1 = new Thread(() => ClientHandler(client));
+                    //thread1.Start();
                     //Diconecting with the CLient
                     //client.Close();
                 }
@@ -70,9 +71,9 @@ namespace RestAPIServerLib
             while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
             {
                 //Translate data bytes to a ASCII string.
-                data = System.Text.Encoding.ASCII.GetString(bytes, 0, i);
+                data += System.Text.Encoding.ASCII.GetString(bytes, 0, i);
                 
-                Console.WriteLine(data);
+               //Console.WriteLine(data);
 
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(data);
 
@@ -81,7 +82,6 @@ namespace RestAPIServerLib
                     break;
                 }
             }
-
             RequestKontext req = RequestKontext.GetRequest(data);
             ServerReply reply = ServerReply.HandlingRequest(req);
 

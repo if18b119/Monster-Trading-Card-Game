@@ -12,8 +12,9 @@ namespace MCTG
 
         {            
             MyServer server = new MyServer();
-            Thread thread = new Thread(new ThreadStart(server.StartListening));
-            thread.Start();
+            server.StartListening();
+            //Thread thread = new Thread(new ThreadStart(server.StartListening));
+            //thread.Start();
 
         }
     }
