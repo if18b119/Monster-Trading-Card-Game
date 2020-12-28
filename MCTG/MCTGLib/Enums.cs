@@ -7,7 +7,7 @@ using System.Text;
 namespace MCTGclass
 {
     
-        public enum UserRole
+        public enum role
         {
             admin,
             player
