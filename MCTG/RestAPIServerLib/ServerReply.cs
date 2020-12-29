@@ -101,35 +101,24 @@ namespace RestAPIServerLib
             }
 
 
-            else if (frag[1] == "messages" && frag.Length == 3 && frag[2]!="") // frag[0]="", frag[1]="messages", frag[3]=integer
+            else if (frag[1] == "deck" && frag.Length == 2) 
             {
-                if (Convert.ToInt32(frag[2]) <= Directory.GetFiles(pfad).Length && frag[2] != "" && Convert.ToInt32(frag[2]) > 0)//if the index doesn't pass the number of messages
-                {
-                    string file_on_index;
-                    int index = Convert.ToInt32(frag[2]) - 1;
-                    StringBuilder tmp = new StringBuilder();
-                    file_on_index = Convert.ToString(Directory.GetFiles(pfad).GetValue(index));
-                    tmp.Append("Name: ");
-                    tmp.Append(file_on_index.Remove(0, pfad.Length));
-                    tmp.Append("\n");
-                    tmp.Append("Nachricht:\n");
-                    using (var streamReader = new StreamReader(file_on_index, Encoding.UTF8))
-                    {
-                        tmp.Append(streamReader.ReadToEnd());
-                    }
-                    
-
-                    string _return = Convert.ToString(tmp);
-
-                    return new ServerReply(req.Protocol, "200 OK", _return, "text");
+                string result = DBManagment.Show_Deck(req.Authorization);
+                if (result == "No deck found!")//if the index doesn't pass the number of messages
+                {                  
+                    return new ServerReply(req.Protocol, "200 OK", result, "text");
                 }
-
+                else if (result == "Error: User doesn't have a session / invalid Token!")
+                {
+                    return new ServerReply(req.Protocol, "401 Unauthorized", result, "text");
+                }
                 else
                 {
-                    return OuttaRange(req);
+                    return new ServerReply(req.Protocol, "200 OK", result, "text");
                 }
-
             }
+
+
             else
             {
                 return BadRequest(req);
@@ -295,28 +284,33 @@ namespace RestAPIServerLib
                 return BadRequest(req);
             }
             string[] frag = req.Options.Split('/');
-            if (frag[1] == "messages" && frag.Length == 3)
+            if (frag[1] == "deck" && frag.Length == 2)
             {
-                if (Convert.ToInt32(frag[2]) <= Directory.GetFiles(pfad).Length && Convert.ToInt32(frag[2]) > 0 && frag[2] != "")
+                List <string> deck_cards = JsonConvert.DeserializeObject<List<string>>(req.Body);
+                foreach (string s in deck_cards)
                 {
-                    if (req.Body[0] != '\n')
-                    {
-                        string file_on_index;
-                        int index = Convert.ToInt32(frag[2]) - 1;
-                        file_on_index = Convert.ToString(Directory.GetFiles(pfad).GetValue(index));
-                        File.WriteAllText(file_on_index, req.Body);
-                        return new ServerReply(req.Protocol, "200 OK", "", "text");
-                    }
-
-                    else
-                    {
-                        return BadRequest(req);
-                    }
-
+                    Console.WriteLine(s);
+                }
+                int result = DBManagment.Configure_Deck(req.Authorization, deck_cards);
+                if (result == 0)
+                {
+                    return new ServerReply(req.Protocol, "200 OK", "Deck configured!", "text");
+                }
+                else if (result == 2)
+                {
+                    return new ServerReply(req.Protocol, "416 Range Not Satisfiable", "Error: Must be 4 Cards to create or edit deck!", "text");
+                }
+                else if(result ==1)
+                {
+                    return new ServerReply(req.Protocol, "401 Unauthorized", "Error: Not logged in or invalid token", "text");
+                }
+                else if(result == 3)
+                {
+                    return new ServerReply(req.Protocol, "401 Unauthorized", "Error: One or more Cards are not obtained by the User!", "text");
                 }
                 else
                 {
-                    return OuttaRange(req);
+                    return BadRequest(req);
                 }
             }
             else
