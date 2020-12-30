@@ -1,3 +1,4 @@
+delete from deck where username is not null;
 delete from session where session_id is not null;
 delete from game_user where username is not null;
 delete from store where card_id is not null;
