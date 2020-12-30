@@ -589,63 +589,29 @@ namespace MCTGclass
             }
         }
 
-        public static void Show_stats(string i_username)
+        public static string Show_scoreboard(string i_username)
         {
-            try
-            {
-                if (has_session(i_username) == true)
+           
+           if (has_session(i_username) == true)
+           {
+                var con = new NpgsqlConnection(cs);
+                string result = "";
+                string sql = "Select * from scoreboard";
+                var cmd = new NpgsqlCommand(sql, con);
+                con.Open();
+                NpgsqlDataReader rdr = cmd.ExecuteReader();
+                while (rdr.Read())
                 {
-                      var con = new NpgsqlConnection(cs);
-                    string sql = "Select elo, wins, defeats, draws from game_user where username = @username";
-                      var cmd = new NpgsqlCommand(sql, con);
-                    con.Open();
-                    cmd.Parameters.AddWithValue("username", i_username);
-                    cmd.Prepare();
-
-                      NpgsqlDataReader rdr = cmd.ExecuteReader();
-                    while (rdr.Read())
-                    {
-                        Console.WriteLine("Elo: {0}    Wins: {1}   Defeats: {2}   Draws: {3}",
-                            rdr.GetInt32(0), rdr.GetInt32(1), rdr.GetInt32(2), rdr.GetInt32(3));
-                    }
+                    result += "Username: " + rdr.GetString(0) +  " - Fights: " + rdr.GetInt32(4) + " - Wins: " + rdr.GetInt32(1) +
+                            " - Defeats: " + rdr.GetInt32(2) + " - Draws: " + rdr.GetInt32(3) +  " - Elo: " + rdr.GetInt32(5) + "\r\n";
                 }
-                else
-                {
-                    throw new Exception("Error: User is not logged in / Invalid Token!");
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("{0} Exception caught.", e);
-            }
-        }
-
-        public static void Show_scoreboard(string i_username)
-        {
-            try
-            {
-                if (has_session(i_username) == true)
-                {
-                      var con = new NpgsqlConnection(cs);
-                    string sql = "Select * from scoreboard";
-                      var cmd = new NpgsqlCommand(sql, con);
-                    con.Open();
-                      NpgsqlDataReader rdr = cmd.ExecuteReader();
-                    while (rdr.Read())
-                    {
-                        Console.WriteLine("Username: {0}   Fights: {1}   Wins: {2}   Defeats: {3}   Draws: {4}   Elo: {5} ",
-                            rdr.GetString(0), rdr.GetInt32(4), rdr.GetInt32(1), rdr.GetInt32(2), rdr.GetInt32(3), rdr.GetInt32(5));
-                    }
-                }
-                else
-                {
-                    throw new Exception("Error: User is not logged in / Invalid Token!");
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("{0} Exception caught.", e);
-            }
+                return result;
+           }
+           else
+           {
+                return "Error: User is not logged in / Invalid Token!";
+           }           
+           
         }
 
 
@@ -820,6 +786,91 @@ namespace MCTGclass
                 // NO session / invalid Token
                 return 1;
             }
+        }
+
+
+        public static string Show_Players_Data(string i_username)
+        {
+            if (has_session(i_username))
+            {
+
+                string result = "";
+                int i = 1;
+                var cs = "Host=localhost;Port=5433;Username=tarek;Password=123456;Database=MCTG";
+                using var con = new NpgsqlConnection(cs);
+                string sql = "Select username, name, email, bio from game_user where username = @username";
+                using var cmd = new NpgsqlCommand(sql, con);
+                con.Open();
+                cmd.Parameters.AddWithValue("username", i_username);
+                cmd.Prepare();
+
+                using NpgsqlDataReader rdr = cmd.ExecuteReader();
+                while (rdr.Read())
+                {
+                    result += i + ") Username: " + rdr.GetString(0) + " - Name: " + rdr.GetString(1) + " - E-Mail: " +
+                       rdr.GetString(2) + " - Bio: " + rdr.GetString(3) + "\r\n";
+                    i++;
+                }
+                return result;
+            }
+            else
+            {
+                return ("Error: User doesn't have a session / invalid Token!");
+            }
+        }
+
+        public static bool Edit_data(string i_username, string i_name, string i_bio, string i_email)
+        {
+            if (has_session(i_username) == true)
+            {
+                var cs = "Host=localhost;Port=5433;Username=tarek;Password=123456;Database=MCTG";
+                using var con = new NpgsqlConnection(cs);
+                con.Open();
+                string sql = "Update game_user set name = @name, bio = @bio, email=@email where username = @username";
+                using var cmd = new NpgsqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("username", i_username);
+                cmd.Parameters.AddWithValue("name", i_name);
+                cmd.Parameters.AddWithValue("bio", i_bio);
+                cmd.Parameters.AddWithValue("email", i_email);
+
+                cmd.Prepare();
+                cmd.ExecuteNonQuery();
+                con.Close();
+                return true;
+            }
+            else
+            {
+                return false;
+
+            }
+        }
+
+        public static string Show_stats(string i_username)
+        {
+           
+                if (has_session(i_username) == true)
+                {
+                    var cs = "Host=localhost;Port=5433;Username=tarek;Password=123456;Database=MCTG";
+                    using var con = new NpgsqlConnection(cs);
+                    string result = "";
+                    string sql = "Select elo, wins, defeats, draws from game_user where username = @username";
+                    using var cmd = new NpgsqlCommand(sql, con);
+                    con.Open();
+                    cmd.Parameters.AddWithValue("username", i_username);
+                    cmd.Prepare();
+
+                    using NpgsqlDataReader rdr = cmd.ExecuteReader();
+                    while (rdr.Read())
+                    {
+                        result += "Elo: " + rdr.GetInt32(0) +   " - Wins: "  + rdr.GetInt32(1) + " - Defeats: " + rdr.GetInt32(2) +" - Draws: " +  rdr.GetInt32(3);
+                    }
+                    return result;
+                }
+                else
+                {
+                    return "Error: User is not logged in / Invalid Token!";
+                }
+           
         }
 
 

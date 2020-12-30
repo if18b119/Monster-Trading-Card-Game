@@ -119,6 +119,53 @@ namespace RestAPIServerLib
             }
 
 
+            else if (frag[1] == "users" && frag.Length == 3 && frag[2] != "")
+            {
+                if(frag[2] == req.Authorization)
+                {
+                    string result = DBManagment.Show_Players_Data(req.Authorization);
+                    if (result == "Error: User doesn't have a session / invalid Token!" )
+                    {
+                        return new ServerReply(req.Protocol, "401 Unauthorized", result, "text");
+                    }
+                    else
+                    {
+                        return new ServerReply(req.Protocol, "200 OK", result, "text");
+                    }
+                }
+                else
+                {
+                    return BadRequest(req);
+                }
+            }
+
+            else if (frag[1] == "stats" && frag.Length == 2)
+            {
+                string result = DBManagment.Show_stats(req.Authorization);
+                if(result == "Error: User is not logged in / Invalid Token!")
+                {
+                    return new ServerReply(req.Protocol, "401 Unauthorized", result, "text");
+                }
+                else
+                {
+                    return new ServerReply(req.Protocol, "200 OK", result, "text");
+                }
+            }
+
+            else if (frag[1] == "score" && frag.Length == 2)
+            {
+                string result = DBManagment.Show_scoreboard(req.Authorization);
+                if(result == "Error: User is not logged in / Invalid Token!")
+                {
+                    return new ServerReply(req.Protocol, "401 Unauthorized", result, "text");
+
+                }
+                else
+                {
+                    return new ServerReply(req.Protocol, "200 OK", result, "text");
+                }
+            }
+
             else
             {
                 return BadRequest(req);
@@ -284,6 +331,7 @@ namespace RestAPIServerLib
                 return BadRequest(req);
             }
             string[] frag = req.Options.Split('/');
+
             if (frag[1] == "deck" && frag.Length == 2)
             {
                 List <string> deck_cards = JsonConvert.DeserializeObject<List<string>>(req.Body);
@@ -307,6 +355,25 @@ namespace RestAPIServerLib
                 else if(result == 3)
                 {
                     return new ServerReply(req.Protocol, "401 Unauthorized", "Error: One or more Cards are not obtained by the User!", "text");
+                }
+                else
+                {
+                    return BadRequest(req);
+                }
+            }
+            else if (frag[1] == "users" && frag.Length == 3 && frag[2] != "")
+            {
+                if (frag[2] == req.Authorization)
+                {
+                    User new_data = JsonConvert.DeserializeObject<User>(req.Body);
+                    if(DBManagment.Edit_data(req.Authorization, new_data.Name, new_data.Bio, new_data.Email))
+                    {
+                        return new ServerReply(req.Protocol, "200 OK", "Data configured!", "text");
+                    }
+                    else
+                    {
+                        return new ServerReply(req.Protocol, "401 Unauthorized", "Error: Not logged in or invalid token", "text");
+                    }
                 }
                 else
                 {
