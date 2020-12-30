@@ -796,7 +796,6 @@ namespace MCTGclass
 
                 string result = "";
                 int i = 1;
-                var cs = "Host=localhost;Port=5433;Username=tarek;Password=123456;Database=MCTG";
                 using var con = new NpgsqlConnection(cs);
                 string sql = "Select username, name, email, bio from game_user where username = @username";
                 using var cmd = new NpgsqlCommand(sql, con);
@@ -823,7 +822,6 @@ namespace MCTGclass
         {
             if (has_session(i_username) == true)
             {
-                var cs = "Host=localhost;Port=5433;Username=tarek;Password=123456;Database=MCTG";
                 using var con = new NpgsqlConnection(cs);
                 con.Open();
                 string sql = "Update game_user set name = @name, bio = @bio, email=@email where username = @username";
@@ -850,7 +848,6 @@ namespace MCTGclass
            
                 if (has_session(i_username) == true)
                 {
-                    var cs = "Host=localhost;Port=5433;Username=tarek;Password=123456;Database=MCTG";
                     using var con = new NpgsqlConnection(cs);
                     string result = "";
                     string sql = "Select elo, wins, defeats, draws from game_user where username = @username";
@@ -874,5 +871,135 @@ namespace MCTGclass
         }
 
 
+        public static bool Count_Trading()
+        {
+            int i = 0;
+            using var con = new NpgsqlConnection(cs);
+            string sql = "Select count(*) from trading_erea_offer";
+            using var cmd = new NpgsqlCommand(sql, con);
+            con.Open();
+            using NpgsqlDataReader rdr = cmd.ExecuteReader();
+            rdr.Read();
+            i = rdr.GetInt32(0);
+            if (i > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public static string Show_tradings(string i_username)
+        {
+            if (has_session(i_username))
+            {
+                if (Count_Trading())
+                {
+                    string result = "";
+                    int i = 1;
+                    using var con = new NpgsqlConnection(cs);
+                    string sql = "Select trading_erea_offer.username, trading_erea_offer.offer_id, all_user_cards.name, elementar_type, damage, all_user_cards.card_type, min_damage, trading_erea_req.card_type FROM all_user_cards, trading_erea_offer, trading_erea_req where trading_erea_offer.card_id = all_user_cards.card_id and trading_erea_offer.username not in (@username)";
+                    using var cmd = new NpgsqlCommand(sql, con);
+                    con.Open();
+                    cmd.Parameters.AddWithValue("username", i_username);
+                    cmd.Prepare();
+
+                    using NpgsqlDataReader rdr = cmd.ExecuteReader();
+                    while (rdr.Read())
+                    {
+                        result += i + ") TradeID: " + rdr.GetInt32(1) + "    -      Owner: " + rdr.GetString(0) + "\r\n" + "Card to give:\r\n" +
+                                    "Name: " + rdr.GetString(2) + "   -   Type: " + rdr.GetString(5) + "   -   Element: " + rdr.GetValue(3) + "   -   Damage: " + rdr.GetDouble(4)
+                                    + "\r\n" + "Requested Card: \r\n" + " MinDamage: " + rdr.GetDouble(6) + "   -   Type: " + rdr.GetString(7) + "\r\n";
+                        i++;
+                    }
+                    return result;
+                }
+                else
+                {
+                    return ("No tradings available");
+                }
+
+            }
+            else
+            {
+                return ("User doesn't have a session / invalid Token!");
+            }
+        }
+
+        public static int Create_Trading_Deal(string i_username, TreadingDeal td)
+        {
+            if (has_session(i_username))
+            {   
+                if(Has_Specific_Card(i_username,td.CardToTrade)==1) //check if user owns the card
+                {
+                    //insert into trading_erea_offer
+                    using var con = new NpgsqlConnection(cs);
+                    con.Open();
+                    string sql = "Insert into trading_erea_offer (offer_id, username, card_id) values (@id, @username, @card_id)";
+                    using var cmd = new NpgsqlCommand(sql, con);
+                    cmd.Parameters.AddWithValue("username", i_username);
+                    cmd.Parameters.AddWithValue("id", td.ID);
+                    cmd.Parameters.AddWithValue("card_id", td.CardToTrade);
+                    cmd.Prepare();
+                    cmd.ExecuteNonQuery();
+                    con.Close();
+
+
+                    //insert into trading_erea_req
+                    con.Open();
+                    sql = "Insert into trading_erea_req (offer_id, min_damage, card_type) values (@id, @min_damage, @card_type)";
+                    using var cmd2 = new NpgsqlCommand(sql, con);
+                    cmd2.Parameters.AddWithValue("id", td.ID);
+                    cmd2.Parameters.AddWithValue("min_damage", td.MinimumDamage);
+                    cmd2.Parameters.AddWithValue("card_type", td.Type);
+                    cmd2.Prepare();
+                    cmd2.ExecuteNonQuery();
+                    con.Close();
+
+                    return 0;
+                }
+                else
+                {   
+                    //User doesnt own the card he wanna sell
+                    return 2;
+                }
+                
+            }
+            else
+            {   
+                //invalid token, doesnt have session
+                return 1;
+            }
+        }
+
+        public static int Delete_Trade(string i_username, string card_id)
+        {
+            if(has_session(i_username))
+            {
+                if(Has_Specific_Card(i_username, card_id)==1)
+                {
+                    using var con = new NpgsqlConnection(cs);
+                    con.Open();
+                    string sql = "DELETE FROM trading_erea_offer where card_id = @card_id";
+                    using var cmd = new NpgsqlCommand(sql, con);
+                    cmd.Parameters.AddWithValue("card_id", card_id);
+                    cmd.Prepare();
+                    cmd.ExecuteNonQuery();
+                    con.Close();
+                    return 0;
+                }
+                else
+                {
+                    //User doesnt own the card he wanna delete from offer
+                    return 2;
+                }
+            }
+            else
+            {
+                //invalid token, doesnt have session
+                return 1;
+            }
+        }
     }
 }

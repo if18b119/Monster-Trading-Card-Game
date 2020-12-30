@@ -166,6 +166,19 @@ namespace RestAPIServerLib
                 }
             }
 
+            else if (frag[1] == "tradings" && frag.Length == 2)
+            {
+                string result = DBManagment.Show_tradings(req.Authorization);
+                if(result == "User doesn't have a session / invalid Token!")
+                {
+                    return new ServerReply(req.Protocol, "401 Unauthorized", result, "text");
+                }
+                else
+                {
+                    return new ServerReply(req.Protocol, "200 OK", result, "text");
+                }
+            }
+
             else
             {
                 return BadRequest(req);
@@ -313,11 +326,31 @@ namespace RestAPIServerLib
                     else
                     {
                         return BadRequest(req);
-                    }
-                    
-                    
-                
+                    }                                                     
             }
+            else if (frag[1] == "tradings" && frag.Length == 2)
+            {   
+                TreadingDeal td = JsonConvert.DeserializeObject<TreadingDeal>(req.Body);
+                int result = DBManagment.Create_Trading_Deal(req.Authorization, td);
+                if(result == 0)
+                {
+                    return new ServerReply(req.Protocol, "200 OK", "Treade Created", "text");
+                }
+                else if (result == 1)
+                {
+                    return new ServerReply(req.Protocol, "401 Unauthorized", "Error: Not logged in or invalid token", "text");
+                }
+                else if (result == 2)
+                {
+                    return new ServerReply(req.Protocol, "409 Conflict", "Error: User doesnt own this card!", "text");
+                }
+                else
+                {
+                    return BadRequest(req);
+                }
+            }
+
+
             else
             {
                 return BadRequest(req);
@@ -393,18 +426,26 @@ namespace RestAPIServerLib
                 return BadRequest(req);
             }
             string[] frag = req.Options.Split('/');
-            if (frag[1] == "messages" && frag.Length == 3)
+           if (frag[1] == "tradings" && frag.Length == 3 && frag[2] != "")
             {
-                if (Convert.ToInt32(frag[2]) <= Directory.GetFiles(pfad).Length && Convert.ToInt32(frag[2]) > 0 && frag[2] != "")//if the index doesn't pass the number of messages
+                string card_id = frag[2];
+                int result = DBManagment.Delete_Trade(req.Authorization, card_id);
+                if(result==0)
                 {
-                    int index = Convert.ToInt32(frag[2]) - 1;
-                    string file_on_index = Convert.ToString(Directory.GetFiles(pfad).GetValue(index));
-                    File.Delete(file_on_index);
-                    return new ServerReply(req.Protocol, "200 OK", "", "text");
+                    return new ServerReply(req.Protocol, "200 OK", "Trade deleted", "text");
+                }
+                else if(result == 1)
+                {
+                    return new ServerReply(req.Protocol, "401 Unauthorized", "Error: Not logged in or invalid token", "text");
+                }
+                else if(result == 2)
+                {
+                    return new ServerReply(req.Protocol, "409 Conflict", "Error: User doesnt own this card!", "text");
+
                 }
                 else
                 {
-                    return OuttaRange(req);
+                    return BadRequest(req);
                 }
             }
             else

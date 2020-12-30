@@ -68,6 +68,23 @@ echo.
 curl -X GET http://localhost:10001/users/someGuy  --header "Authorization: Basic kienboec-mtcgToken"
 echo.
 echo.
+REM --------------------------------------------------
+echo 20) trade
+echo check trading deals
+curl -X GET http://localhost:10001/tradings --header "Authorization: Basic kienboec-mtcgToken"
+echo.
+echo create trading deal
+curl -X POST http://localhost:10001/tradings --header "Content-Type: application/json" --header "Authorization: Basic kienboec-mtcgToken" -d "{\"Id\": 1, \"CardToTrade\": \"171f6076-4eb5-4a7d-b3f2-2d650cc3d237\", \"Type\": \"monster\", \"MinimumDamage\": 15}"
+echo.
+echo check trading deals
+curl -X GET http://localhost:10001/tradings --header "Authorization: Basic kienboec-mtcgToken"
+echo.
+curl -X GET http://localhost:10001/tradings --header "Authorization: Basic altenhof-mtcgToken"
+echo.
+echo delete trading deals
+curl -X DELETE http://localhost:10001/tradings/171f6076-4eb5-4a7d-b3f2-2d650cc3d237 --header "Authorization: Basic kienboec-mtcgToken"
+echo.
+echo.
 
 REM --------------------------------------------------
 echo end...
