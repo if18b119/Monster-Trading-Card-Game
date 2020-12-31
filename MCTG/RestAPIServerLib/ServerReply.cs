@@ -328,6 +328,8 @@ namespace RestAPIServerLib
                         return BadRequest(req);
                     }                                                     
             }
+
+
             else if (frag[1] == "tradings" && frag.Length == 2)
             {   
                 TreadingDeal td = JsonConvert.DeserializeObject<TreadingDeal>(req.Body);
@@ -350,6 +352,55 @@ namespace RestAPIServerLib
                 }
             }
 
+            else if (frag[1] == "tradings" && frag.Length == 3 && frag[2] != "")
+            {
+                int offer_id = Convert.ToInt32(frag[2]);
+                string card_id = JsonConvert.DeserializeObject<string>(req.Body);
+                string username = req.Authorization;
+                int result = DBManagment.Trade(username, offer_id, card_id);
+                if(result == 0)
+                {
+                    return new ServerReply(req.Protocol, "200 OK", "Treaded successfully!", "text");
+                }
+                else if(result == 1)
+                {
+                    //doesnt have session / invalid token
+                    return new ServerReply(req.Protocol, "401 Unauthorized", "Error: Not logged in or invalid token", "text");
+
+
+                }
+                else if(result == 2)
+                {
+                    //You dont own the card
+                    return new ServerReply(req.Protocol, "409 Conflict", "Error: User doesnt own this card!", "text");
+
+                }
+                else if(result ==3)
+                {
+                    //trade doesnt exists
+                    return new ServerReply(req.Protocol, "409 Conflict", "Error: Trade doesn't exists!", "text");
+
+
+                }
+                else if(result == 4)
+                {
+                    //can't trade with yourself
+                    return new ServerReply(req.Protocol, "409 Conflict", "Error: Can't trade with yourself!", "text");
+
+
+                }
+                else if(result == 5)
+                {
+                    //doesn't have the correct card
+                    return new ServerReply(req.Protocol, "409 Conflict", "Error: This Card doesn't match the required Card!", "text");
+
+                }
+                else
+                {
+                    return BadRequest(req);
+                }
+                
+            }
 
             else
             {
@@ -428,8 +479,8 @@ namespace RestAPIServerLib
             string[] frag = req.Options.Split('/');
            if (frag[1] == "tradings" && frag.Length == 3 && frag[2] != "")
             {
-                string card_id = frag[2];
-                int result = DBManagment.Delete_Trade(req.Authorization, card_id);
+                int offer_id = Convert.ToInt32(frag[2]);
+                int result = DBManagment.Delete_Trade(req.Authorization, offer_id);
                 if(result==0)
                 {
                     return new ServerReply(req.Protocol, "200 OK", "Trade deleted", "text");
