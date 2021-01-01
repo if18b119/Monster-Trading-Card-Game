@@ -18,7 +18,7 @@ curl -X PUT http://localhost:10001/deck --header "Content-Type: application/json
 echo.
 curl -X GET http://localhost:10001/deck --header "Authorization: Basic kienboec-mtcgToken"
 echo.
-curl -X PUT http://localhost:10001/deck --header "Content-Type: application/json" --header "Authorization: Basic altenhof-mtcgToken" -d "[\"id\", \"id\", \"id\", \"id\"]"
+curl -X PUT http://localhost:10001/deck --header "Content-Type: application/json" --header "Authorization: Basic altenhof-mtcgToken" -d "[\"237dbaef-49e3-4c23-b64b-abf5c087b276\", \"67f9048f-99b8-4ae4-b866-d8008d00c53d\", \"aa9999a0-734c-49c6-8f4a-651864b14e62\", \"166c1fd5-4dcb-41a8-91cb-f45dcd57cef3\"]"
 echo.
 curl -X GET http://localhost:10001/deck --header "Authorization: Basic altenhof-mtcgToken"
 echo.

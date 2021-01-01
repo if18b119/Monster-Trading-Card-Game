@@ -35,9 +35,9 @@ namespace RestAPIServerLib
                     Console.Write("Waiting for a connection... ");
                     TcpClient client = listener.AcceptTcpClient(); // Server akzeptiert einen Request/Client und blockt
                     Console.WriteLine("Connected successfully!");
-                    ClientHandler(client);
-                    //Thread thread1 = new Thread(() => ClientHandler(client));
-                    //thread1.Start();
+                    //ClientHandler(client);
+                    Thread thread1 = new Thread(() => ClientHandler(client));
+                    thread1.Start();
                     //Diconecting with the CLient
                     //client.Close();
                 }

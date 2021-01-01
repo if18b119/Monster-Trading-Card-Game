@@ -10,7 +10,9 @@ namespace MCTGclass
     {
         public string ID { get; set; } = "";
         public string Name { get; set; } = "";
-        public string Damage { get; set; } = "";
+        public double Damage { get; set; } = 0;
+        public string Type { get; set; } = "";
+        public string Element { get; set; } = "";
 
     }
 }

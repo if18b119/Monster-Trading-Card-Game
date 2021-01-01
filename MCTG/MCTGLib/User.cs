@@ -8,6 +8,7 @@ namespace MCTGclass
 {
     public class User
     {
+        public List<Card> Deck = new List<Card>();
         public string Username { get; set; } = "";
         public string Password { get; set; } = "";
         public role Role { get; set; } = role.player;

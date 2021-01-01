@@ -7,6 +7,7 @@ using System.Net.Sockets;
 using System.Diagnostics;
 using MCTGclass;
 using Newtonsoft.Json;
+using System.Threading;
 namespace RestAPIServerLib
 {
     public class ServerReply
@@ -16,8 +17,7 @@ namespace RestAPIServerLib
         public String Data { get; set; }
         public String ContentType { get; set; }
 
-        private static String pfad;
-        
+        private static Mutex mut = new Mutex();
 
 
 
@@ -34,7 +34,6 @@ namespace RestAPIServerLib
 
         public static ServerReply HandlingRequest(RequestKontext req)
         {
-            pfad = "C:\\Users\\titto\\Desktop\\3.Semester\\Software Engineering\\RestServer\\Restful API Ue1\\Messages\\";
             if (req == null)
             {
                 return BadRequest(req);
@@ -401,7 +400,37 @@ namespace RestAPIServerLib
                 }
                 
             }
+            else if (frag[1] == "battles" && frag.Length == 2)
+            {
+                string username = req.Authorization;
+                int result = DBManagment.ReadyUpForFight(username);
+                if(result == 0)
+                {
+                    mut.WaitOne();
+                    FightSystem.Count_responses++;
+                    mut.ReleaseMutex();
+                    if (FightSystem.Count_responses %2==0)
+                    {
+                        FightSystem.Log = "";
+                        FightSystem.ResetEvent.Reset();
+                    }
+                    return new ServerReply(req.Protocol, "200 OK", FightSystem.Log, "text");
+                   
+                }
+                else if (result == 1)
+                {
+                    return new ServerReply(req.Protocol, "401 Unauthorized", "Error: Not logged in or invalid token", "text");
+                }
+                else if (result == 2)
+                {
+                    return new ServerReply(req.Protocol, "409 Conflict", "Error: User doesnt own a deck!", "text");
 
+                }
+                else
+                {
+                    return BadRequest(req);
+                }
+            }
             else
             {
                 return BadRequest(req);
