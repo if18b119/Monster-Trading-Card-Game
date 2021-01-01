@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="RestAPIServerLib.HeaderInfo">
+    <Position X="0.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAEAAAAAAAAACAAAAAAAAAAAAA=</HashCode>
+      <FileName>HeaderInfo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RestAPIServerLib.MyServer">
+    <Position X="2.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAIAAAAQAAAAAAAAAAIAAAAgAAAAAAAAAAIA=</HashCode>
+      <FileName>MyServer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RestAPIServerLib.RequestKontext">
+    <Position X="2.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAIAABAADAAAAAAAEAAQAAAABAAAA=</HashCode>
+      <FileName>RequestKontext.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RestAPIServerLib.ServerReply">
+    <Position X="0.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAAFAAAEAQAAAAgAAABAAAEgABAAAAAQAAAAAAE=</HashCode>
+      <FileName>ServerReply.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

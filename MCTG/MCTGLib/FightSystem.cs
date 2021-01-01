@@ -59,8 +59,8 @@ namespace MCTGclass
                         Log += player2.Username + " won this Battle\r\nCongrats!\r\n";
                         looser = player1.Username;
                         winner = player2.Username;
-                        DBManagment.UpdatePlayerStats(player1.Username, "looser");
-                        DBManagment.UpdatePlayerStats(player2.Username, "winner");
+                        DBManagmentFight.UpdatePlayerStats(player1.Username, "looser");
+                        DBManagmentFight.UpdatePlayerStats(player2.Username, "winner");
                     }
                     else if (count_cards_player2 == 0)
                     {
@@ -69,14 +69,14 @@ namespace MCTGclass
 
                         looser = player2.Username;
                         winner = player1.Username;
-                        DBManagment.UpdatePlayerStats(player1.Username, "winner");
-                        DBManagment.UpdatePlayerStats(player2.Username, "looser");
+                        DBManagmentFight.UpdatePlayerStats(player1.Username, "winner");
+                        DBManagmentFight.UpdatePlayerStats(player2.Username, "looser");
                     }
                     else if (count_of_rounds == 100)
                     {
                         Log += "The Fight is been going on for 100 rounds now!\r\nIts a draw gerara here!";
-                        DBManagment.UpdatePlayerStats(player1.Username, "draw");
-                        DBManagment.UpdatePlayerStats(player2.Username, "draw");
+                        DBManagmentFight.UpdatePlayerStats(player1.Username, "draw");
+                        DBManagmentFight.UpdatePlayerStats(player2.Username, "draw");
                     }
                     break;
                 }

@@ -12,9 +12,16 @@ namespace MCTGclass
         {
             admin,
             player
-        }
+    }
 
-        public enum CardType
+    public enum CopyOfrole
+
+    {
+        admin,
+        player
+    }
+
+    public enum CardType
         {
             monster,
             spell
@@ -35,5 +42,15 @@ namespace MCTGclass
         Kraken,
         Goblin,
         FireElv
-        }
+    }
+
+    public enum CopyOfMonsterType
+    {
+        Dragon,
+        Wizzard,
+        Ork,
+        Kraken,
+        Goblin,
+        FireElv
+    }
 }

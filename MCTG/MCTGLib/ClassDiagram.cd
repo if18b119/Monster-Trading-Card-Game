@@ -1,0 +1,144 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="MCTGclass.Card">
+    <Position X="5.75" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAACAAAAAgAAAAAgAAAQAAAAAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>DBClasses\Card.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MCTGclass.TreadingDeal">
+    <Position X="2.25" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAAAAAAAABAAAAAAAAAQAAAAAAIAA=</HashCode>
+      <FileName>DBClasses\TreadingDeal.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MCTGclass.User">
+    <Position X="4" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAGQAAAAQAAAAAAAACAABAAAAAAAA=</HashCode>
+      <FileName>DBClasses\User.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MCTGclass.DBManagment">
+    <Position X="2.25" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQCAAABAAAAAAAAAAAAAAAAAAAAgBAAAAAAAAA=</HashCode>
+      <FileName>DBManagment\DBManagment.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MCTGclass.DBManagmentAddUser">
+    <Position X="4" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAA=</HashCode>
+      <FileName>DBManagment\DBManagmentAddUser.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MCTGclass.DBManagmentDeck">
+    <Position X="5.75" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIIAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DBManagment\DBManagmentDeck.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MCTGclass.DBManagmentFight">
+    <Position X="0.5" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAA=</HashCode>
+      <FileName>DBManagment\DBManagmentFight.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MCTGclass.DBManagmentLogIn">
+    <Position X="2.25" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAA=</HashCode>
+      <FileName>DBManagment\DBManagmentLogIn.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MCTGclass.DBManagmentPackages">
+    <Position X="4" Y="2" Width="1.5" />
+    <NestedTypes>
+      <Struct Name="MCTGclass.DBManagmentPackages.Card_Type_Elemnt" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>DBManagment\DBManagmentPackages.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAIAAAAAAIAAABAAAAAAAAAAAAAAAAAAAQgAA=</HashCode>
+      <FileName>DBManagment\DBManagmentPackages.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MCTGclass.DBManagmentShowCards">
+    <Position X="4" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAgA=</HashCode>
+      <FileName>DBManagment\DBManagmentShowCards.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MCTGclass.DBManagmentStats">
+    <Position X="0.5" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DBManagment\DBManagmentStats.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MCTGclass.DBManagmentTrade">
+    <Position X="0.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAAAAAAABAAAAAAAgAAAAIAAAEAAEAAEAA=</HashCode>
+      <FileName>DBManagment\DBManagmentTrade.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MCTGclass.DBManagmentUserData">
+    <Position X="2.25" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAgAA=</HashCode>
+      <FileName>DBManagment\DBManagmentUserData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MCTGclass.FightSystem">
+    <Position X="5.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAACAAAAAAIAAAAAAAAAgAAQAAAAAAAAAABAA=</HashCode>
+      <FileName>FightSystem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MCTGclass.HeaderInfo">
+    <Position X="0.5" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAEAAAAAAAAACAAAAAAAAAAAAA=</HashCode>
+      <FileName>HeaderInfo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="MCTGclass.role">
+    <Position X="5.75" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAEAAAABAAAAAAAAAAA=</HashCode>
+      <FileName>Enums.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="MCTGclass.CardType">
+    <Position X="0.5" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAIAAAA=</HashCode>
+      <FileName>Enums.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="MCTGclass.ElementarType">
+    <Position X="2.25" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAJAAAAAAAAAA=</HashCode>
+      <FileName>Enums.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="MCTGclass.MonsterType">
+    <Position X="4" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAAAAAAAAABgAAAAAAAAAIAAAgAAAAAAAgAAA=</HashCode>
+      <FileName>Enums.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
