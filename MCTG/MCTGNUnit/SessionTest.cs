@@ -19,20 +19,7 @@ namespace MCTGNUnit
             Authorization: kienboec
             Payload:
          */
-        public static void SignOut(string i_username)
-        {
-            var con = new NpgsqlConnection(DBManagment.cs);
-            con.Open();
-
-            var sql = "DELETE from session where username = @username";
-            var cmd = new NpgsqlCommand(sql, con);
-
-            cmd.Parameters.AddWithValue("username", i_username);
-            cmd.Prepare();
-            cmd.ExecuteNonQuery();
-            con.Close();
-
-        }
+       
 
 
         [Test, Order(5)]

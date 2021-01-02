@@ -7,6 +7,31 @@ namespace MCTGclass
 {
     public static class DBManagmentLogIn
     {
+
+        public static bool SignOut(string i_username)
+        {   
+            if (DBManagment.has_session(i_username) == true)
+            {
+                var con = new NpgsqlConnection(DBManagment.cs);
+                con.Open();
+
+                var sql = "DELETE from session where username = @username";
+                var cmd = new NpgsqlCommand(sql, con);
+
+                cmd.Parameters.AddWithValue("username", i_username);
+                cmd.Prepare();
+                cmd.ExecuteNonQuery();
+                con.Close();
+                return true;
+            }
+            else
+            {
+                //user is not logged in
+                return false;
+            }
+
+        }
+
         public static int CheckLogIn(string i_name, string i_pwd)
         {
             try

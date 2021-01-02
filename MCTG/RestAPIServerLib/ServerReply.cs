@@ -261,6 +261,26 @@ namespace RestAPIServerLib
 
             }
 
+            else if (frag[1] == "signout" && frag.Length == 2)
+            {
+                if (req.Body != "")
+                {
+                    return new ServerReply(req.Protocol, "204 No Content", "Error: No Content", "text");
+                }
+                else
+                {
+                    if(DBManagmentLogIn.SignOut(req.Authorization))
+                    {
+                        return new ServerReply(req.Protocol, "200 OK", "Logged out successfully!", "text");
+                    }
+                    else
+                    {
+                        return new ServerReply(req.Protocol, "404 Not Found", "Error: User doesn't have a session!", "text");
+                    }
+                }
+
+            }
+
             else if (frag[1] == "packages" && frag.Length == 2)
             {
                 if (req.Body == "")
@@ -340,7 +360,7 @@ namespace RestAPIServerLib
                 int result = DBManagmentTrade.Create_Trading_Deal(req.Authorization, td);
                 if(result == 0)
                 {
-                    return new ServerReply(req.Protocol, "200 OK", "Treade Created", "text");
+                    return new ServerReply(req.Protocol, "201 Created", "Treade Created", "text");
                 }
                 else if (result == 1)
                 {
@@ -349,6 +369,10 @@ namespace RestAPIServerLib
                 else if (result == 2)
                 {
                     return new ServerReply(req.Protocol, "409 Conflict", "Error: User doesnt own this card!", "text");
+                }
+                else if (result == 3)
+                {
+                    return new ServerReply(req.Protocol, "409 Conflict", "Error: User is not allowed to have the card in his deck!", "text");
                 }
                 else
                 {

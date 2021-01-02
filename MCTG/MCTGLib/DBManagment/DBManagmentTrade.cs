@@ -63,37 +63,72 @@ namespace MCTGclass
             }
         }
 
+        public static bool CheckIfCardNotInDeck(string i_username, string id)
+        {
+            int count = 0;
+            var con = new NpgsqlConnection(DBManagment.cs);
+            con.Open();
+            //check if user already exists
+            var sql_count = "SELECT count (*) from deck where username = @username and card_id = @card_id";
+            var cmd = new NpgsqlCommand(sql_count, con);
+            //prepared statments
+            cmd.Parameters.AddWithValue("username", i_username);
+            cmd.Parameters.AddWithValue("card_id", id);
+            cmd.Prepare();
+            //
+            NpgsqlDataReader GetCount = cmd.ExecuteReader(); //curser
+
+            GetCount.Read();
+            count = GetCount.GetInt32(0);
+            if (count == 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         public static int Create_Trading_Deal(string i_username, TreadingDeal td)
         {
             if (DBManagment.has_session(i_username))
             {
                 if (DBManagment.Has_Specific_Card(i_username, td.CardToTrade) == 1) //check if user owns the card
                 {
-                    //insert into trading_erea_offer
-                    using var con = new NpgsqlConnection(DBManagment.cs);
-                    con.Open();
-                    string sql = "Insert into trading_erea_offer (offer_id, username, card_id) values (@id, @username, @card_id)";
-                    using var cmd = new NpgsqlCommand(sql, con);
-                    cmd.Parameters.AddWithValue("username", i_username);
-                    cmd.Parameters.AddWithValue("id", td.ID);
-                    cmd.Parameters.AddWithValue("card_id", td.CardToTrade);
-                    cmd.Prepare();
-                    cmd.ExecuteNonQuery();
-                    con.Close();
+                    if(CheckIfCardNotInDeck(i_username, td.CardToTrade)==true)
+                    {
+                        //insert into trading_erea_offer
+                        using var con = new NpgsqlConnection(DBManagment.cs);
+                        con.Open();
+                        string sql = "Insert into trading_erea_offer (offer_id, username, card_id) values (@id, @username, @card_id)";
+                        using var cmd = new NpgsqlCommand(sql, con);
+                        cmd.Parameters.AddWithValue("username", i_username);
+                        cmd.Parameters.AddWithValue("id", td.ID);
+                        cmd.Parameters.AddWithValue("card_id", td.CardToTrade);
+                        cmd.Prepare();
+                        cmd.ExecuteNonQuery();
+                        con.Close();
 
 
-                    //insert into trading_erea_req
-                    con.Open();
-                    sql = "Insert into trading_erea_req (offer_id, min_damage, card_type) values (@id, @min_damage, @card_type)";
-                    using var cmd2 = new NpgsqlCommand(sql, con);
-                    cmd2.Parameters.AddWithValue("id", td.ID);
-                    cmd2.Parameters.AddWithValue("min_damage", td.MinimumDamage);
-                    cmd2.Parameters.AddWithValue("card_type", td.Type);
-                    cmd2.Prepare();
-                    cmd2.ExecuteNonQuery();
-                    con.Close();
+                        //insert into trading_erea_req
+                        con.Open();
+                        sql = "Insert into trading_erea_req (offer_id, min_damage, card_type) values (@id, @min_damage, @card_type)";
+                        using var cmd2 = new NpgsqlCommand(sql, con);
+                        cmd2.Parameters.AddWithValue("id", td.ID);
+                        cmd2.Parameters.AddWithValue("min_damage", td.MinimumDamage);
+                        cmd2.Parameters.AddWithValue("card_type", td.Type);
+                        cmd2.Prepare();
+                        cmd2.ExecuteNonQuery();
+                        con.Close();
 
-                    return 0;
+                        return 0;
+                    }
+                    else
+                    {
+                        // card is in users deck
+                        return 3;
+                    }
                 }
                 else
                 {

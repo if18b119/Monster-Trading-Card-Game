@@ -18,8 +18,11 @@ namespace MCTGclass
         public static ManualResetEvent ResetEvent { get; } = new ManualResetEvent(false); // wie mutex aber thread übergreifend false -> zu, true -> auf
         public static Queue<User> Warteschlange = new Queue<User>();
         public static int Count_responses { get; set; } = 0;
-      
-       
+        public static string winner { get; set; } = "";
+        public static string looser { get; set; } = "";
+
+        public static bool draw = false;
+
         public static void InitFight(User user)
         {
             Warteschlange.Enqueue(user);
@@ -34,9 +37,6 @@ namespace MCTGclass
         public static void Startfight(User player1, User player2)
         {
             int count_of_rounds = 0;
-            string winner = "";
-            string looser = "";
-            bool draw = false;
             int count_cards_player1 = 0;
             int count_cards_player2 = 0;
             var rand = new Random();
@@ -75,6 +75,7 @@ namespace MCTGclass
                     else if (count_of_rounds == 100)
                     {
                         Log += "The Fight is been going on for 100 rounds now!\r\nIts a draw gerara here!";
+                        draw = true;
                         DBManagmentFight.UpdatePlayerStats(player1.Username, "draw");
                         DBManagmentFight.UpdatePlayerStats(player2.Username, "draw");
                     }
@@ -130,7 +131,7 @@ namespace MCTGclass
                    
                    
                 }
-                else
+                else 
                 {
                     if(card1.Type == "knight" && card2.Name == "WaterSpell")
                     {
@@ -152,41 +153,39 @@ namespace MCTGclass
                         Log += player2.Username + "s " + card2.Name + " is immune against " + player1.Username + "s " + card1.Name + "!\r\n";
                         card1.Damage = 0;
                     }
-                }
 
+                    if (card1.Type == "fire" && card2.Type == "normal")
+                    {
+                        card1.Damage = card1.Damage * 2;
+                        card2.Damage = card2.Damage / 2;
+                    }
+                    else if (card2.Type == "fire" && card1.Type == "normal")
+                    {
+                        card2.Damage = card2.Damage * 2;
+                        card1.Damage = card1.Damage / 2;
+                    }
+                    if (card1.Type == "water" && card2.Type == "fire")
+                    {
+                        card1.Damage = card1.Damage * 2;
+                        card2.Damage = card2.Damage / 2;
+                    }
+                    else if (card2.Type == "water" && card1.Type == "fire")
+                    {
+                        card2.Damage = card2.Damage * 2;
+                        card1.Damage = card1.Damage / 2;
+                    }
+                    if (card1.Type == "normal" && card2.Type == "water")
+                    {
+                        card1.Damage = card1.Damage * 2;
+                        card2.Damage = card2.Damage / 2;
+                    }
+                    else if (card2.Type == "normal" && card1.Type == "water")
+                    {
+                        card2.Damage = card2.Damage * 2;
+                        card1.Damage = card1.Damage / 2;
+                    }
 
-
-                if (card1.Type == "fire" && card2.Type == "normal")
-                {
-                    card1.Damage = card1.Damage * 2;
-                    card2.Damage = card2.Damage / 2;
                 }
-                else if (card2.Type == "fire" && card1.Type == "normal")
-                {
-                    card2.Damage = card2.Damage * 2;
-                    card1.Damage = card1.Damage / 2;
-                }
-                if (card1.Type == "water" && card2.Type == "fire")
-                {
-                    card1.Damage = card1.Damage * 2;
-                    card2.Damage = card2.Damage / 2;
-                }
-                else if (card2.Type == "water" && card1.Type == "fire")
-                {
-                    card2.Damage = card2.Damage * 2;
-                    card1.Damage = card1.Damage / 2;
-                }
-                if (card1.Type == "normal" && card2.Type == "water")
-                {
-                    card1.Damage = card1.Damage * 2;
-                    card2.Damage = card2.Damage / 2;
-                }
-                else if (card2.Type == "normal" && card1.Type == "water")
-                {
-                    card2.Damage = card2.Damage * 2;
-                    card1.Damage = card1.Damage / 2;
-                }
-
 
                 if (card1.Damage > card2.Damage)
                 {

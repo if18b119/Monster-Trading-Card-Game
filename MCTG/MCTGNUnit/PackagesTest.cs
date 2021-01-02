@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RestAPIServerLib;
+using System.Threading;
 
 namespace MCTGNUnit
 {
@@ -21,9 +22,9 @@ namespace MCTGNUnit
         [Test, Order(15)]
         public void AcquirePackageNotLoggedIn()  // should not aqcuire package cause not logged in
         {
-            SessionTest.SignOut("testadmin"); 
 
-            RequestKontext req = new RequestKontext("POST", "/transactions/packages", "HTTP/1.1", "", "testadmin");
+
+            RequestKontext req = new RequestKontext("POST", "/transactions/packages", "HTTP/1.1", "", "aws");
             ServerReply reply = ServerReply.HandlingRequest(req);
 
             Assert.IsNotNull(reply);
@@ -34,20 +35,13 @@ namespace MCTGNUnit
 
         [Test, Order(16)]
         public void AcquirePackage()  // successfully bought package , added to players stack
-        {
-            //Log in with admin
-            RequestKontext req = new RequestKontext("POST", "/sessions", "HTTP/1.1", "{\"Username\":\"testadmin\", \"Password\":\"test123\"}", "");
+        {         
+            RequestKontext req = new RequestKontext("POST", "/transactions/packages", "HTTP/1.1", "", "testadmin");
             ServerReply reply = ServerReply.HandlingRequest(req);
-            Assert.AreEqual("200 OK", reply.Status);
-            ////
-
-            RequestKontext req2 = new RequestKontext("POST", "/transactions/packages", "HTTP/1.1", "", "testadmin");
-            ServerReply reply2 = ServerReply.HandlingRequest(req2);
-
-            Assert.IsNotNull(reply2);
+            Assert.IsNotNull(reply);
             //return new ServerReply(req.Protocol, "200 OK", "Cards Acquired", "text");
-            Assert.AreEqual("200 OK", reply2.Status);
-            Assert.AreEqual("Cards Acquired", reply2.Data);
+            Assert.AreEqual("200 OK", reply.Status);
+            Assert.AreEqual("Cards Acquired", reply.Data);
         }
 
         [Test, Order(17)]

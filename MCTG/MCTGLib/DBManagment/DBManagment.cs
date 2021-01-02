@@ -80,7 +80,7 @@ namespace MCTGclass
                 while (rdr.Read())
                 {
                     result += "Username: " + rdr.GetString(0) +  " - Fights: " + rdr.GetInt32(4) + " - Wins: " + rdr.GetInt32(1) +
-                            " - Defeats: " + rdr.GetInt32(2) + " - Draws: " + rdr.GetInt32(3) +  " - Elo: " + rdr.GetInt32(5) + "\r\n";
+                            " - Defeats: " + rdr.GetInt32(2) + " - Draws: " + rdr.GetInt32(3) +  " - Elo: " + rdr.GetInt32(5) + " - KD: " + rdr.GetInt32(6) + "\r\n";
                 }
                 return result;
            }
