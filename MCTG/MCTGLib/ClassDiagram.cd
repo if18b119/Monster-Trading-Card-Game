@@ -52,12 +52,15 @@
   <Class Name="MCTGclass.DBManagmentLogIn">
     <Position X="2.25" Y="3" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAACAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAA=</HashCode>
       <FileName>DBManagment\DBManagmentLogIn.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="MCTGclass.DBManagmentPackages">
     <Position X="4" Y="2" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
     <NestedTypes>
       <Struct Name="MCTGclass.DBManagmentPackages.Card_Type_Elemnt" Collapsed="true">
         <TypeIdentifier>
@@ -71,7 +74,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="MCTGclass.DBManagmentShowCards">
-    <Position X="4" Y="4.5" Width="1.5" />
+    <Position X="4" Y="5.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAgA=</HashCode>
       <FileName>DBManagment\DBManagmentShowCards.cs</FileName>
@@ -87,12 +90,12 @@
   <Class Name="MCTGclass.DBManagmentTrade">
     <Position X="0.5" Y="3.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AEAAAAAAAAAAAAAAABAAAAAAAgAAAAIAAAEAAEAAEAA=</HashCode>
+      <HashCode>AEAAAAAAIAAAAAAAABAAAAAAAgAAAAIAAAEAAEAAEAA=</HashCode>
       <FileName>DBManagment\DBManagmentTrade.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="MCTGclass.DBManagmentUserData">
-    <Position X="2.25" Y="4.25" Width="1.5" />
+    <Position X="2.25" Y="4.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAgAA=</HashCode>
       <FileName>DBManagment\DBManagmentUserData.cs</FileName>
@@ -101,7 +104,7 @@
   <Class Name="MCTGclass.FightSystem">
     <Position X="5.75" Y="2.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAEAAAACAAAAAAIAAAAAAAAAgAAQAAAAAAAAAABAA=</HashCode>
+      <HashCode>AAAAEAAAACAAAIAAIAIAAAAAAAgAAQAAAAAAAAAABAA=</HashCode>
       <FileName>FightSystem.cs</FileName>
     </TypeIdentifier>
   </Class>

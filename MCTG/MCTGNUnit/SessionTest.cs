@@ -71,6 +71,7 @@ namespace MCTGNUnit
             Assert.AreEqual("404 Not Found", reply.Status);
             Assert.AreEqual("Error: User doesn't exist!", reply.Data);
         }
+        
 
         [Test, Order(9)]
         public static void LogInEmptyPayload()  //No such User in table game_user, must create user first

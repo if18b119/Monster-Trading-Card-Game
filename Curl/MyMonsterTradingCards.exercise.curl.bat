@@ -53,9 +53,7 @@ curl -X POST http://localhost:10001/sessions --header "Content-Type: application
 echo.
 echo.
 echo --
-echo should sign out successfully
-echo --
-curl -X POST http://localhost:10001/signout --header "Content-Type: application/json" --header "Authorization: Basic kienboec-mtcgToken" -d ""
+
 echo --
 echo should fail, wrong password
 echo --

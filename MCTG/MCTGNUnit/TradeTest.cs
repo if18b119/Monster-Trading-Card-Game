@@ -181,7 +181,17 @@ namespace MCTGNUnit
 
         }
 
-        
+        [Test, Order(54)]
+        public static void LogOut()  //No such User in table game_user, must create user first
+        {
+            RequestKontext req = new RequestKontext("POST", "/signout", "HTTP/1.1", "", "test1");
+            ServerReply reply = ServerReply.HandlingRequest(req);
+
+            Assert.IsNotNull(reply);
+            //return new ServerReply(req.Protocol, "404 Not Found", "Error: User doesn't exist!", "text");
+            Assert.AreEqual("200 OK", reply.Status);
+
+        }
 
 
     }
