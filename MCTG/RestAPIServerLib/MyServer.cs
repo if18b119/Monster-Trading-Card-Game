@@ -32,12 +32,12 @@ namespace RestAPIServerLib
                 while (is_connected)
                 {
 
-                    Console.Write("Waiting for a connection... ");
+                    Console.Write("Waiting for a connection... \r\n");
                     TcpClient client = listener.AcceptTcpClient(); // Server akzeptiert einen Request/Client und blockt
-                    Console.WriteLine("Connected successfully!");
-                    ClientHandler(client);
-                    //Thread thread1 = new Thread(() => ClientHandler(client));
-                    //thread1.Start();
+                    Console.WriteLine("Connected successfully!\r\n");
+                    //ClientHandler(client);
+                    Thread thread1 = new Thread(() => ClientHandler(client));
+                    thread1.Start();
                     //Diconecting with the CLient
                     //client.Close();
                 }

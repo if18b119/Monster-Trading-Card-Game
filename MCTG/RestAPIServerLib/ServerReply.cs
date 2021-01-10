@@ -7,6 +7,7 @@ using System.Net.Sockets;
 using System.Diagnostics;
 using MCTGclass;
 using Newtonsoft.Json;
+using System.Threading;
 namespace RestAPIServerLib
 {
     public class ServerReply
@@ -16,8 +17,7 @@ namespace RestAPIServerLib
         public String Data { get; set; }
         public String ContentType { get; set; }
 
-        private static String pfad;
-        
+        private static Mutex mut = new Mutex();
 
 
 
@@ -34,16 +34,19 @@ namespace RestAPIServerLib
 
         public static ServerReply HandlingRequest(RequestKontext req)
         {
-            pfad = "C:\\Users\\titto\\Desktop\\3.Semester\\Software Engineering\\RestServer\\Restful API Ue1\\Messages\\";
             if (req == null)
             {
                 return BadRequest(req);
             }
 
             //Header Informationen vom  client werden ausgegeben
-             Console.WriteLine($"Type: {req.Type}");
-            Console.WriteLine($"Request: {req.Options}");
+            Console.WriteLine($"Type: {req.Type}");
+            Console.WriteLine($"Options: {req.Options}");
             Console.WriteLine($"Protocoll: {req.Protocol}");
+            Console.WriteLine($"Authorization: {req.Authorization}");
+            Console.WriteLine($"Payload: {req.Body}");
+
+
             /*
            foreach (HeaderInfo tmp in RequestKontext.HeaderInformation)
             {
@@ -85,7 +88,7 @@ namespace RestAPIServerLib
             if (frag[1] == "cards" && frag.Length == 2)
             {
                 string username = req.Authorization;
-                string result = DBManagment.Show_acquired_cards(username);
+                string result = DBManagmentShowCards.Show_acquired_cards(username);
                 if (result == "Error: User is not logged in / Invalid Token!")
                 {
                     return new ServerReply(req.Protocol, "401 Unauthorized", "Error: Not logged in or invalid token", "text");
@@ -103,8 +106,8 @@ namespace RestAPIServerLib
 
             else if (frag[1] == "deck" && frag.Length == 2) 
             {
-                string result = DBManagment.Show_Deck(req.Authorization);
-                if (result == "No deck found!")//if the index doesn't pass the number of messages
+                string result = DBManagmentDeck.Show_Deck(req.Authorization);
+                if (result == "No deck found!")
                 {                  
                     return new ServerReply(req.Protocol, "200 OK", result, "text");
                 }
@@ -119,6 +122,66 @@ namespace RestAPIServerLib
             }
 
 
+            else if (frag[1] == "users" && frag.Length == 3 && frag[2] != "")
+            {
+                if(frag[2] == req.Authorization)
+                {
+                    string result = DBManagmentUserData.Show_Players_Data(req.Authorization);
+                    if (result == "Error: User doesn't have a session / invalid Token!" )
+                    {
+                        return new ServerReply(req.Protocol, "401 Unauthorized", result, "text");
+                    }
+                    else
+                    {
+                        return new ServerReply(req.Protocol, "200 OK", result, "text");
+                    }
+                }
+                else
+                {
+                    return BadRequest(req);
+                }
+            }
+
+            else if (frag[1] == "stats" && frag.Length == 2)
+            {
+                string result = DBManagmentStats.Show_stats(req.Authorization);
+                if(result == "Error: User is not logged in / Invalid Token!")
+                {
+                    return new ServerReply(req.Protocol, "401 Unauthorized", result, "text");
+                }
+                else
+                {
+                    return new ServerReply(req.Protocol, "200 OK", result, "text");
+                }
+            }
+
+            else if (frag[1] == "score" && frag.Length == 2)
+            {
+                string result = DBManagment.Show_scoreboard(req.Authorization);
+                if(result == "Error: User is not logged in / Invalid Token!")
+                {
+                    return new ServerReply(req.Protocol, "401 Unauthorized", result, "text");
+
+                }
+                else
+                {
+                    return new ServerReply(req.Protocol, "200 OK", result, "text");
+                }
+            }
+
+            else if (frag[1] == "tradings" && frag.Length == 2)
+            {
+                string result = DBManagmentTrade.Show_tradings(req.Authorization);
+                if(result == "User doesn't have a session / invalid Token!")
+                {
+                    return new ServerReply(req.Protocol, "401 Unauthorized", result, "text");
+                }
+                else
+                {
+                    return new ServerReply(req.Protocol, "200 OK", result, "text");
+                }
+            }
+
             else
             {
                 return BadRequest(req);
@@ -131,6 +194,7 @@ namespace RestAPIServerLib
                 return BadRequest(req);
             }
             string[] frag = req.Options.Split('/');
+
             if (frag[1] == "users" && frag.Length == 2)
             {
                 if (req.Body == "")
@@ -140,7 +204,7 @@ namespace RestAPIServerLib
                 else
                 {
                     User new_user = JsonConvert.DeserializeObject<User>(req.Body);
-                    int response = DBManagment.AddUser(new_user.Username, new_user.Password, new_user.Role, new_user.Name, new_user.Email);
+                    int response = DBManagmentAddUser.AddUser(new_user.Username, new_user.Password, new_user.Role, new_user.Name, new_user.Email);
                     if (response == 0)
                     {
                         return new ServerReply(req.Protocol, "201 Created", "Created", "text");
@@ -171,7 +235,7 @@ namespace RestAPIServerLib
                 else
                 {
                    User new_user = JsonConvert.DeserializeObject<User>(req.Body);
-                   int response = DBManagment.CheckLogIn(new_user.Username, new_user.Password);
+                   int response = DBManagmentLogIn.CheckLogIn(new_user.Username, new_user.Password);
                    if(response == 0)
                     {
                         return new ServerReply(req.Protocol, "200 OK", "Logged IN successfully!", "text");
@@ -197,6 +261,26 @@ namespace RestAPIServerLib
 
             }
 
+            else if (frag[1] == "signout" && frag.Length == 2)
+            {
+                if (req.Body != "")
+                {
+                    return new ServerReply(req.Protocol, "204 No Content", "Error: No Content", "text");
+                }
+                else
+                {
+                    if(DBManagmentLogIn.SignOut(req.Authorization))
+                    {
+                        return new ServerReply(req.Protocol, "200 OK", "Logged out successfully!", "text");
+                    }
+                    else
+                    {
+                        return new ServerReply(req.Protocol, "404 Not Found", "Error: User doesn't have a session!", "text");
+                    }
+                }
+
+            }
+
             else if (frag[1] == "packages" && frag.Length == 2)
             {
                 if (req.Body == "")
@@ -210,7 +294,7 @@ namespace RestAPIServerLib
                     List<Card> new_cards = JsonConvert.DeserializeObject<List<Card>>(req.Body); //getting the cards from the req body
                     foreach (Card card in new_cards)
                     {
-                         response.Push(DBManagment.Add_cards_to_shop(username, card.ID, card.Name,Convert.ToDouble(card.Damage)));
+                         response.Push(DBManagmentPackages.Add_cards_to_shop(username, card.ID, card.Name,Convert.ToDouble(card.Damage)));
                     }
                     if(!response.Contains(1) && !response.Contains(2) && !response.Contains(3) && !response.Contains(4))
                     {
@@ -218,7 +302,7 @@ namespace RestAPIServerLib
                     }
                     if(response.Contains(1))
                     {
-                        return new ServerReply(req.Protocol, "409 Conflict", "Error: User already logged IN / has a Session!", "text");
+                        return new ServerReply(req.Protocol, "409 Conflict", "Error: User doesnt have a session / Invalid Token!", "text");
                     }
                     else if(response.Contains(2))
                     {
@@ -226,7 +310,7 @@ namespace RestAPIServerLib
                     }
                     else if (response.Contains(3))
                     {
-                        return new ServerReply(req.Protocol, "409 Conflict", "Error: One of the cards already exists!", "text");
+                        return new ServerReply(req.Protocol, "409 Conflict", "Error: One or more cards already exists in Store!", "text");
                     }
                     else
                     {
@@ -242,7 +326,7 @@ namespace RestAPIServerLib
                 
                 
                     string username = req.Authorization;
-                    int result = DBManagment.Acquire_Card(username);
+                    int result = DBManagmentPackages.Acquire_Card(username);
                     if (result == 0)
                     {
                         return new ServerReply(req.Protocol, "200 OK", "Cards Acquired", "text");
@@ -266,10 +350,115 @@ namespace RestAPIServerLib
                     else
                     {
                         return BadRequest(req);
-                    }
-                    
-                    
+                    }                                                     
+            }
+
+
+            else if (frag[1] == "tradings" && frag.Length == 2)
+            {   
+                TreadingDeal td = JsonConvert.DeserializeObject<TreadingDeal>(req.Body);
+                int result = DBManagmentTrade.Create_Trading_Deal(req.Authorization, td);
+                if(result == 0)
+                {
+                    return new ServerReply(req.Protocol, "201 Created", "Treade Created", "text");
+                }
+                else if (result == 1)
+                {
+                    return new ServerReply(req.Protocol, "401 Unauthorized", "Error: Not logged in or invalid token", "text");
+                }
+                else if (result == 2)
+                {
+                    return new ServerReply(req.Protocol, "409 Conflict", "Error: User doesnt own this card!", "text");
+                }
+                else if (result == 3)
+                {
+                    return new ServerReply(req.Protocol, "409 Conflict", "Error: User is not allowed to have the card in his deck!", "text");
+                }
+                else
+                {
+                    return BadRequest(req);
+                }
+            }
+
+            else if (frag[1] == "tradings" && frag.Length == 3 && frag[2] != "")
+            {
+                int offer_id = Convert.ToInt32(frag[2]);
+                string card_id = JsonConvert.DeserializeObject<string>(req.Body);
+                string username = req.Authorization;
+                int result = DBManagmentTrade.Trade(username, offer_id, card_id);
+                if(result == 0)
+                {
+                    return new ServerReply(req.Protocol, "200 OK", "Treaded successfully!", "text");
+                }
+                else if(result == 1)
+                {
+                    //doesnt have session / invalid token
+                    return new ServerReply(req.Protocol, "401 Unauthorized", "Error: Not logged in or invalid token", "text");
+
+
+                }
+                else if(result == 2)
+                {
+                    //You dont own the card
+                    return new ServerReply(req.Protocol, "409 Conflict", "Error: User doesnt own this card!", "text");
+
+                }
+                else if(result ==3)
+                {
+                    //trade doesnt exists
+                    return new ServerReply(req.Protocol, "409 Conflict", "Error: Trade doesn't exists!", "text");
+
+
+                }
+                else if(result == 4)
+                {
+                    //can't trade with yourself
+                    return new ServerReply(req.Protocol, "409 Conflict", "Error: Can't trade with yourself!", "text");
+
+
+                }
+                else if(result == 5)
+                {
+                    //doesn't have the correct card
+                    return new ServerReply(req.Protocol, "409 Conflict", "Error: This Card doesn't match the required Card!", "text");
+
+                }
+                else
+                {
+                    return BadRequest(req);
+                }
                 
+            }
+            else if (frag[1] == "battles" && frag.Length == 2)
+            {
+                string username = req.Authorization;
+                int result = DBManagmentFight.ReadyUpForFight(username);
+                if(result == 0)
+                {
+                    mut.WaitOne();
+                    FightSystem.Count_responses++;
+                    mut.ReleaseMutex();
+                    if (FightSystem.Count_responses %2==0)
+                    {
+                        FightSystem.Log = "";
+                        FightSystem.ResetEvent.Reset();
+                    }
+                    return new ServerReply(req.Protocol, "200 OK", FightSystem.Log, "text");
+                   
+                }
+                else if (result == 1)
+                {
+                    return new ServerReply(req.Protocol, "401 Unauthorized", "Error: Not logged in or invalid token", "text");
+                }
+                else if (result == 2)
+                {
+                    return new ServerReply(req.Protocol, "409 Conflict", "Error: User doesnt own a deck!", "text");
+
+                }
+                else
+                {
+                    return BadRequest(req);
+                }
             }
             else
             {
@@ -284,6 +473,7 @@ namespace RestAPIServerLib
                 return BadRequest(req);
             }
             string[] frag = req.Options.Split('/');
+
             if (frag[1] == "deck" && frag.Length == 2)
             {
                 List <string> deck_cards = JsonConvert.DeserializeObject<List<string>>(req.Body);
@@ -291,7 +481,7 @@ namespace RestAPIServerLib
                 {
                     Console.WriteLine(s);
                 }
-                int result = DBManagment.Configure_Deck(req.Authorization, deck_cards);
+                int result = DBManagmentDeck.Configure_Deck(req.Authorization, deck_cards);
                 if (result == 0)
                 {
                     return new ServerReply(req.Protocol, "200 OK", "Deck configured!", "text");
@@ -313,6 +503,25 @@ namespace RestAPIServerLib
                     return BadRequest(req);
                 }
             }
+            else if (frag[1] == "users" && frag.Length == 3 && frag[2] != "")
+            {
+                if (frag[2] == req.Authorization) //if username in token is same as in link
+                {
+                    User new_data = JsonConvert.DeserializeObject<User>(req.Body);
+                    if(DBManagmentUserData.Edit_data(req.Authorization, new_data.Name, new_data.Bio, new_data.Email))
+                    {
+                        return new ServerReply(req.Protocol, "200 OK", "Data configured!", "text");
+                    }
+                    else
+                    {
+                        return new ServerReply(req.Protocol, "401 Unauthorized", "Error: Not logged in or invalid token", "text");
+                    }
+                }
+                else
+                {
+                    return new ServerReply(req.Protocol, "401 Unauthorized", "Error: You can't change the data of someone else!", "text");
+                }
+            }
             else
             {
                 return BadRequest(req);
@@ -326,18 +535,26 @@ namespace RestAPIServerLib
                 return BadRequest(req);
             }
             string[] frag = req.Options.Split('/');
-            if (frag[1] == "messages" && frag.Length == 3)
+           if (frag[1] == "tradings" && frag.Length == 3 && frag[2] != "")
             {
-                if (Convert.ToInt32(frag[2]) <= Directory.GetFiles(pfad).Length && Convert.ToInt32(frag[2]) > 0 && frag[2] != "")//if the index doesn't pass the number of messages
+                int offer_id = Convert.ToInt32(frag[2]);
+                int result = DBManagmentTrade.Delete_Trade(req.Authorization, offer_id);
+                if(result==0)
                 {
-                    int index = Convert.ToInt32(frag[2]) - 1;
-                    string file_on_index = Convert.ToString(Directory.GetFiles(pfad).GetValue(index));
-                    File.Delete(file_on_index);
-                    return new ServerReply(req.Protocol, "200 OK", "", "text");
+                    return new ServerReply(req.Protocol, "200 OK", "Trade deleted", "text");
+                }
+                else if(result == 1)
+                {
+                    return new ServerReply(req.Protocol, "401 Unauthorized", "Error: Not logged in or invalid token", "text");
+                }
+                else if(result == 2)
+                {
+                    return new ServerReply(req.Protocol, "409 Conflict", "Error: User doesnt own this card!", "text");
+
                 }
                 else
                 {
-                    return OuttaRange(req);
+                    return BadRequest(req);
                 }
             }
             else
